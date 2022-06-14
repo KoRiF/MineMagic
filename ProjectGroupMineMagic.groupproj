@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{8A880AB2-7DFD-4C6A-945D-C353D559076D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ProjectMineMagic.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ProjectMineMagic">
+        <MSBuild Projects="ProjectMineMagic.dproj"/>
+    </Target>
+    <Target Name="ProjectMineMagic:Clean">
+        <MSBuild Projects="ProjectMineMagic.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProjectMineMagic:Make">
+        <MSBuild Projects="ProjectMineMagic.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ProjectMineMagic"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ProjectMineMagic:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ProjectMineMagic:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
