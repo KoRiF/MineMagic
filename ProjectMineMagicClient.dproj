@@ -93,7 +93,7 @@
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
         <SanitizedProjectName>ProjectMineMagicClient</SanitizedProjectName>
-        <DCC_UnitSearchPath>.\AzureAPI3;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>.\Azure-Cognitive-Services\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_UsePackage>fmx;DbxCommonDriver;bindengine;IndyIPCommon;emsclient;aurelius;IndyProtocols;dbxcds;FmxTeeUI;ControlLabPkg;FireDACSqliteDriver;DbxClientDriver;FrameStandPackage_11;soapmidas;Mitov_FMX_BasicLab;dbexpress;inet;VideoLabBasicPkg;AudioLabEssentialPkg;FireDACDBXDriver;OpenWireBindingFmxPkg;tmsbcl;SignalLabGenericBasicPkg;CustomIPTransport;IndySystem;VideoLabAdditionalPkg;VideoLabPkg;OpenWireBindingDatabasePkg;IntelligenceLabPkg;FMXTMSFNCCorePkgDXE14;FireDACCommon;FMX_SignalLabScopePkg;bindcompdbx;rtl;Mitov_BasicLab;remotedb;DBXSqliteDriver;AudioLabBasicPkg;DataSnapFireDAC;FMX_VideoLabBasicPkg;FireDAC;xmlrtl;dsnap;xdata;DataSnapNativeClient;VisionLabPkg;sparkle;FMXTMSFNCMapsPkgDXE14;FireDACCommonDriver;IndyIPClient;Mitov_Runtime;SignalLabAdditionalPkg;bindcompfmx;TextLabBasicPkg;LogicLabBasicPkg;TimingLabBasicPkg;fmxFireDAC;DataSnapCommon;dbrtl;DBXInterBaseDriver;FMX_PlotLabPkg;LogicLabPkg;SignalLabGenericPkg;CommunicationLabPkg;bindcomp;IndyCore;RESTBackendComponents;Mitov_AnimationLab;RESTComponents;IndyIPServer;dsnapxml;DataSnapClient;DataSnapProviderClient;SignalLabPkg;OpenWireBindingPkg;emsclientfiredac;FireDACDSDriver;OpenWirePkg;VideoLabGenericBasicPkg;tethering;AudioLabGenericBasicPkg;CommunicationLabBasicPkg;CloudService;FMXTee;AudioLabPkg;soaprtl;SignalLabBasicPkg;soapserver;FireDACIBDriver;$(DCC_UsePackage)</DCC_UsePackage>
@@ -183,6 +183,8 @@
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -236,12 +238,6 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win32\Debug\ProjectMineMagicClient.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>ProjectMineMagicClient.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="$(BDS)\lib\android\debug\armeabi-v7a\libnative-activity.so" Configuration="Debug" Class="AndroidLibnativeArmeabiv7aFile">
                     <Platform Name="Android64">
                         <RemoteName>libProjectMineMagic.so</RemoteName>
@@ -269,6 +265,12 @@
                 <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_SplashImage_960x720.png" Configuration="Debug" Class="Android_SplashImage960">
                     <Platform Name="Android64">
                         <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Android64\Debug\libProjectMineMagicClient.so" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Android64">
+                        <RemoteName>libProjectMineMagicClient.so</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -317,6 +319,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Win32\Debug\ProjectMineMagicClient.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>ProjectMineMagicClient.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_SplashImage_426x320.png" Configuration="Debug" Class="Android_SplashImage426">
                     <Platform Name="Android64">
                         <RemoteName>splash_image.png</RemoteName>
@@ -343,12 +351,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Android64\Debug\libProjectMineMagicClient.so" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Android64">
-                        <RemoteName>libProjectMineMagicClient.so</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -1221,10 +1223,10 @@
                 </DeployClass>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
@@ -1234,12 +1236,6 @@
             <Platforms>
                 <Platform value="Android">True</Platform>
                 <Platform value="Android64">True</Platform>
-                <Platform value="iOSDevice32">False</Platform>
-                <Platform value="iOSDevice64">False</Platform>
-                <Platform value="iOSSimulator">False</Platform>
-                <Platform value="OSX32">False</Platform>
-                <Platform value="OSX64">False</Platform>
-                <Platform value="OSXARM64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
