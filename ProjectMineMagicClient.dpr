@@ -5,7 +5,8 @@ uses
   FMX.Forms,
   Unit1 in 'Unit1.pas' {Form1},
   UnitVoiceRecorder in 'UnitVoiceRecorder.pas',
-  UnitCommander in 'UnitCommander.pas';
+  UnitCommander in 'UnitCommander.pas',
+  UnitSpeechRecognizer in 'UnitSpeechRecognizer.pas';
 
 {$R *.res}
 

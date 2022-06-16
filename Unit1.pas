@@ -5,13 +5,14 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
-  FMX.Controls.Presentation, FMX.StdCtrls;
+  FMX.Controls.Presentation, FMX.StdCtrls, ncSources;
 
 type
   TForm1 = class(TForm)
     GridLayout1: TGridLayout;
     ButtonVoice: TButton;
     CheckBoxUseClientRecording: TCheckBox;
+    ncClientSource1: TncClientSource;
     procedure ButtonVoiceMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Single);
     procedure ButtonVoiceMouseUp(Sender: TObject; Button: TMouseButton;
@@ -51,7 +52,11 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Self.CheckBoxUseClientRecording.IsChecked := MineCommander.InitRecognizer();
+  Self.CheckBoxUseClientRecording.IsChecked := MineCommander.Locality;
+  MineCommander.SendCommandProc := procedure (cmd: Integer; bytes: TArray<System.Byte>)
+    begin
+      Self.ncClientSource1.ExecCommand(cmd, bytes);
+    end;
 end;
 
 end.
