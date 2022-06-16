@@ -16,6 +16,7 @@ type
       Shift: TShiftState; X, Y: Single);
     procedure ButtonVoiceMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Single);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -46,6 +47,11 @@ procedure TForm1.ButtonVoiceMouseUp(Sender: TObject; Button: TMouseButton;
 begin
   var DoRecordingLocally := CheckBoxUseClientRecording.IsChecked;
   MineCommander.ProcessVoiceCommand(DoRecordingLocally);
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Self.CheckBoxUseClientRecording.IsChecked := MineCommander.InitRecognizer();
 end;
 
 end.
