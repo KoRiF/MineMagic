@@ -6,6 +6,9 @@
         <Projects Include="ProjectMineMagicClient.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="ProjectMineMagicServer.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -23,14 +26,23 @@
     <Target Name="ProjectMineMagicClient:Make">
         <MSBuild Projects="ProjectMineMagicClient.dproj" Targets="Make"/>
     </Target>
+    <Target Name="ProjectMineMagicServer">
+        <MSBuild Projects="ProjectMineMagicServer.dproj"/>
+    </Target>
+    <Target Name="ProjectMineMagicServer:Clean">
+        <MSBuild Projects="ProjectMineMagicServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProjectMineMagicServer:Make">
+        <MSBuild Projects="ProjectMineMagicServer.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="ProjectMineMagicClient"/>
+        <CallTarget Targets="ProjectMineMagicClient;ProjectMineMagicServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ProjectMineMagicClient:Clean"/>
+        <CallTarget Targets="ProjectMineMagicClient:Clean;ProjectMineMagicServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ProjectMineMagicClient:Make"/>
+        <CallTarget Targets="ProjectMineMagicClient:Make;ProjectMineMagicServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
