@@ -2,7 +2,7 @@ unit UnitCommander;
 
 interface
 
-uses UnitVoiceRecorder;
+uses UnitVoiceRecorder, Azure.API3.Speech.SpeechToText;
 
 type
 
@@ -23,27 +23,60 @@ type
     function RecognizeMineCommand(sentence: String): String;
   private
     _AzureRegionPrefix: string;
+    _AzureKey: string;
+    AzureS2T: TAzureSpeechToText;
+    procedure InitAzureKey();
   public
-    property AzureRegionPrefix: String write _AzureRegionPrefix;
+    function InitRecognizer(): boolean;
   End;
 
 var MineCommander: TMineCommander;
 
 implementation
 
-uses System.SysUtils, Azure.API3.Speech.SpeechToText;
-
+uses System.SysUtils, IniFiles, Azure.API3.Connection;
+type
+  TGetAzureTokenProc = reference to function():TAzureToken;
 { TMineCommander }
 
 constructor TMineCommander.Create;
 begin
   Recorder := TVoiceRecorder.Create();
-  _AzureRegionPrefix := '';  { TODO : define Azure recognition prefix }
+  InitAzureKey();  { DONE : define Azure recognition prefix }
 end;
 
 destructor TMineCommander.Destroy;
 begin
   Recorder.Free;
+end;
+
+procedure TMineCommander.InitAzureKey;
+var ini: TIniFile;
+begin
+  var path := IncludeTrailingPathDelimiter(GetCurrentDir());
+  var iniFilename := path + 'minecommander.ini';
+  ini := TIniFile.Create(iniFilename);
+  try
+    _AzureKey := ini.ReadString('Azure', 'Key', _AzureKey);
+    _AzureRegionPrefix := ini.ReadString('AZURE', 'Region', _AzureRegionPrefix);
+  finally
+    ini.Free();
+  end;
+end;
+
+function TMineCommander.InitRecognizer: boolean;
+begin
+  if _AzureKey <> '' then
+  begin
+    AzureS2T := TAzureSpeechToText.Create(nil, _AzureRegionPrefix);
+    var AzToken := TAzureToken.Create(nil, _AzureRegionPrefix);
+    AzToken.SubscriptionKey := _AzureKey;
+    AzureS2T.AccessToken :=  AzToken;
+  end
+  else
+    FreeAndNil(AzureS2T);
+
+  RESULT := AzureS2T <> nil;
 end;
 
 procedure TMineCommander.PassCommand(CommandKey: String);
@@ -61,6 +94,7 @@ begin
     //.. pass audio to Azure
     if Recorder.RecordFile = '' then
       Exit();
+
     var voiceText := Self.RecognizeMineVoice(Recorder.RecordFile);//.. receive text from Azure
     var commandLine := Self.RecognizeMineCommand(voiceText);
     PassCommand(commandLine);
@@ -78,17 +112,9 @@ begin
 end;
 
 function TMineCommander.RecognizeMineVoice(filename: String): String;
-var AzureS2T: TAzureSpeechToText;
-  //rectext: TAzureSpeechToText.TSpeechToTextResults;
 begin
-  AzureS2T := TAzureSpeechToText.Create(nil, _AzureRegionPrefix);
-  try
-    //...
-    var  recognized := AzureS2T.SpeechToText(filename);
-    RESULT := recognized[0].DisplayText;
-  finally
-
-  end;
+  var  recognized := AzureS2T.SpeechToText(filename);
+  RESULT := recognized[0].DisplayText;
 end;
 
 procedure TMineCommander.RecordVoiceCommand(locally: Boolean);
