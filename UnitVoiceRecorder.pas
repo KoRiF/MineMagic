@@ -13,6 +13,15 @@ type
       destructor Destroy(); virtual;
       procedure StartRec(); virtual;
       procedure StopRec();  virtual;
+      
+    private
+      _ChannelsNum, _SampleBitsSize: Word;
+      _SamplesRate: Cardinal;
+    public 
+      property ChannelsNum: Word read _ChannelsNum write _ChannelsNum;
+      property SampleBitsSize: Word read _SampleBitsSize write _SampleBitsSize;
+      property SamplesRate: Cardinal read _SamplesRate write _SamplesRate;
+       
     private
       _recordPath: String;
       _recordName: String;
@@ -70,6 +79,10 @@ constructor TVoiceRecorder.Create;
 begin
   _recordPath := IncludeTrailingPathDelimiter(TPath.GetHomePath); // TODO: debug on Andriod
   Mic := TCaptureDeviceManager.Current.DefaultAudioCaptureDevice;
+
+  _ChannelsNum := 1;
+  _SampleBitsSize := 16;
+  _SamplesRate := 16000; //Hz
 end;
 
 class function TVoiceRecorder.CreateInstance: TVoiceRecorder;
@@ -163,9 +176,9 @@ begin
   FWaveRecorder := TFRecorder.Create(nil);
   With FWaveRecorder.DataFormat do
   begin
-    BitsPerSample := 16;
-    SamplesPerSecond := 16000;
-    Channels := 1;
+    BitsPerSample := Self.SampleBitsSize;
+    SamplesPerSecond := Self.SamplesRate;
+    Channels := Self.ChannelsNum;
   end;
 
   FWaveRecorder.OnBufferNeeded := AllocBuffer;
@@ -208,7 +221,7 @@ begin
     end;
 
     _recordName := GenerateRecName();
-    Save(Self.RecordFile, 16000, 16, 1, Data);
+    Save(Self.RecordFile, SamplesRate, SampleBitsSize, ChannelsNum, Data);
 
     ClearBuffers();
 end;
