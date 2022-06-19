@@ -2,7 +2,8 @@ unit UnitCommander;
 
 interface
 
-uses UnitVoiceRecorder, UnitSpeechRecognizer, System.SysUtils;
+uses UnitVoiceRecorder, UnitSpeechRecognizer,
+  System.Generics.Collections, System.SysUtils;
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
 
@@ -10,7 +11,14 @@ type
     Recorder: TVoiceRecorder;
     Recognizer: TSpeechRecognizer;
   private
-    const MAGIC_KEY = 'magic';
+    const MAGIC_KEY = 'MAGIC';
+    RPC_MAGIC = 0;
+    RPC_RECORD_START = 1;
+    RPC_RECORD_STOP = 2;
+    RPC_RECOGNIZE = 3;
+
+    var COMMANDKEYMAP: TDictionary<String, Integer>;
+    procedure InitKeymapping();
   private
     FLocality: Boolean;
     procedure SetLocality(const Value: Boolean);
@@ -21,7 +29,8 @@ type
 
     procedure RecordVoiceCommand(locally: Boolean = True);
     procedure ProcessVoiceCommand(locally: Boolean = True);
-    procedure PassCommand(CommandKey: String);
+    procedure PassCommand(CommandKey: String); overload;
+    procedure PassCommand(Cmd: Integer; ArgData: String = ''); overload;
   private
     function RecognizeMineVoice(filename: String): String;
     function RecognizeMineCommand(sentence: String): String;
@@ -39,6 +48,19 @@ var MineCommander: TMineCommander;
 
 implementation
 
+function StringToByteArray(const s: string): TArray<System.Byte>;
+begin
+  var CommandChars := s.ToCharArray();
+  var CommandBytes := TArray<System.Byte>.Create();
+
+  SetLength(CommandBytes, Length(CommandChars));
+  for var i := Low(CommandChars) to High(CommandChars) do
+  begin
+    CommandBytes[i] := Byte(AnsiChar(CommandChars[i]));
+  end;
+  RESULT := CommandBytes;
+end;
+
 
 { TMineCommander }
 
@@ -46,6 +68,8 @@ constructor TMineCommander.Create;
 begin
   Recorder := TVoiceRecorder.Create();
   Recognizer := TSpeechRecognizer.ObtainRecognizer();
+
+  InitKeymapping();
 end;
 
 destructor TMineCommander.Destroy;
@@ -58,11 +82,29 @@ begin
   RESULT := Assigned(Recorder.Mic) and Assigned(Self.Recognizer);
 end;
 
+procedure TMineCommander.InitKeymapping;
+begin
+  COMMANDKEYMAP := TDictionary<String, Integer>.Create();
+  COMMANDKEYMAP.Add(MAGIC_KEY, RPC_MAGIC);
+end;
+
 procedure TMineCommander.PassCommand(CommandKey: String);
+var CmdCode: Integer;
 begin
   if CommandKey = '' then
     Exit;
-       { TODO : implement send command key to the server }
+  { DONE : implement send command key to the server }
+  var CommandUp := CommandKey.ToUpper;
+
+  if COMMANDKEYMAP.TryGetValue(CommandUp, CmdCode) then
+    PassCommand(CmdCode, CommandUp);
+
+end;
+
+procedure TMineCommander.PassCommand(Cmd: Integer; ArgData: String = '');
+begin
+  var CommandBytes := StringToByteArray(ArgData);
+  Self._SendCommandProc(Cmd, CommandBytes);
 end;
 
 procedure TMineCommander.ProcessVoiceCommand(locally: Boolean);
@@ -79,7 +121,10 @@ begin
     PassCommand(commandLine);
   end
   else
-    Self.PassCommand('EXEC PROCESSING');
+  begin
+    Self.PassCommand(RPC_RECORD_STOP);
+    Self.PassCommand(RPC_RECOGNIZE);
+  end;
 end;
 
 function TMineCommander.RecognizeMineCommand(sentence: String): String;
@@ -100,7 +145,7 @@ begin
   if locally then
     Recorder.StartRec()
   else
-    Self.PassCommand('EXEC RECORD');
+    Self.PassCommand(RPC_RECORD_START);
 end;
 
 procedure TMineCommander.SetLocality(const Value: Boolean);
