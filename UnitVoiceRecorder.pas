@@ -48,8 +48,6 @@ type
   var
     Buffers: TList; // audio data stored as list of buffers
     RecordSize: Integer; // lengh of recorded audio data
-    PlaySize: Integer; // current size of played audio data
-    PlayBuffer: Integer; // current buffer when playing audio
 
     procedure ClearBuffers();
 
@@ -62,7 +60,7 @@ type
     procedure StopRec();  override;
   private
     procedure AllocBuffer(Sender: TObject; var Buffer: Pointer; var Size: Cardinal);
-    procedure BufferFinish(Sender: TObject; Buffer: Pointer; Size: Cardinal);
+    procedure ArchBuffer(Sender: TObject; Buffer: Pointer; Size: Cardinal);
     procedure SaveRecord();
   End;
 {$ENDIF}
@@ -139,7 +137,7 @@ begin
 end;
 
 
-procedure TWinWaveRecorder.BufferFinish(Sender: TObject; Buffer: Pointer;
+procedure TWinWaveRecorder.ArchBuffer(Sender: TObject; Buffer: Pointer;
   Size: Cardinal);
 begin
   Inc(RecordSize, Size);
@@ -171,7 +169,7 @@ begin
   end;
 
   FWaveRecorder.OnBufferNeeded := AllocBuffer;
-  FWaveRecorder.OnBufferReleased := BufferFinish;
+  FWaveRecorder.OnBufferReleased := ArchBuffer;
 
   Buffers := TList.Create();
 end;
@@ -211,11 +209,14 @@ begin
 
     _recordName := GenerateRecName();
     Save(Self.RecordFile, 16000, 16, 1, Data);
+
     ClearBuffers();
 end;
 
 procedure TWinWaveRecorder.StartRec;
 begin
+  RecordSize := 0;
+  
   FWaveRecorder.Open;
   FWaveRecorder.Start();
 end;
