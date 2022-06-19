@@ -66,7 +66,7 @@ end;
 
 constructor TMineCommander.Create;
 begin
-  Recorder := TVoiceRecorder.Create();
+  Recorder := TVoiceRecorder.CreateInstance();
   Recognizer := TSpeechRecognizer.ObtainRecognizer();
 
   InitKeymapping();
