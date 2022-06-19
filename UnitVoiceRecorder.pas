@@ -237,7 +237,7 @@ end;
 procedure TWinWaveRecorder.StopRec;
 begin
   FWaveRecorder.Stop();
-
+  FWaveRecorder.Close;
   SaveRecord();
 end;
 {$ENDIF}
