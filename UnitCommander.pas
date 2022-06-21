@@ -61,6 +61,15 @@ begin
   RESULT := CommandBytes;
 end;
 
+function ByteArrayToString(const bb: TArray<System.Byte>): string;
+begin
+  var s := '';
+  for var i := Low(bb) to High(bb) do
+  begin
+    s := s + Char(AnsiChar(bb[i]));
+  end;
+  RESULT := s;
+end;
 
 { TMineCommander }
 
