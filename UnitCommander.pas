@@ -29,7 +29,7 @@ type
 
     procedure RecordVoiceCommand(locally: Boolean = True);
     procedure ProcessVoiceCommand(locally: Boolean = True);
-    procedure PassCommand(CommandKey: String); overload;
+    procedure PassCommand(CommandKey: String; Commandline: String = ''); overload;
     procedure PassCommand(Cmd: Integer; ArgData: String = ''); overload;
   private
     function RecognizeMineVoice(filename: String): String;
@@ -97,7 +97,7 @@ begin
   COMMANDKEYMAP.Add(MAGIC_KEY, RPC_MAGIC);
 end;
 
-procedure TMineCommander.PassCommand(CommandKey: String);
+procedure TMineCommander.PassCommand(CommandKey: String; Commandline: String = '');
 var CmdCode: Integer;
 begin
   if CommandKey = '' then
