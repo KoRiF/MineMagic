@@ -31,15 +31,18 @@ type
     procedure ProcessVoiceCommand(locally: Boolean = True);
     procedure PassCommand(CommandKey: String; Commandline: String = ''); overload;
     procedure PassCommand(Cmd: Integer; ArgData: String = ''); overload;
+    procedure ReceiveCommand(Cmd: Integer; ArgData: TArray<System.Byte>);
   private
     function RecognizeMineVoice(filename: String): String;
     function RecognizeMineCommand(sentence: String): String;
   private
+    _ProcessMagic: TProc<String>;
     _SendCommandProc: TProc<Integer, TArray<System.Byte>>;
     function GetLocality(): Boolean;
   public
     property Locality: Boolean read FLocality write SetLocality;
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
+    property ProcessMagic: TProc<String> write _ProcessMagic;
   private
 
   End;
@@ -106,7 +109,9 @@ begin
   var CommandUp := CommandKey.ToUpper;
 
   if COMMANDKEYMAP.TryGetValue(CommandUp, CmdCode) then
-    PassCommand(CmdCode, CommandUp);
+    PassCommand(CmdCode, Commandline)
+  else
+    PassCommand(0, Commandline);
 
 end;
 
@@ -127,12 +132,31 @@ begin
 
     var voiceText := Self.RecognizeMineVoice(Recorder.RecordFile);//.. receive text from Azure
     var commandLine := Self.RecognizeMineCommand(voiceText);
-    PassCommand(commandLine);
+    var commandKey := Self.RecognizeMineCommand(voiceText);
+    PassCommand(commandKey, voiceText);
   end
   else
   begin
     Self.PassCommand(RPC_RECORD_STOP);
     Self.PassCommand(RPC_RECOGNIZE);
+  end;
+end;
+
+procedure TMineCommander.ReceiveCommand(Cmd: Integer;
+  ArgData: TArray<System.Byte>);
+begin
+
+  case Cmd of
+  RPC_MAGIC:
+    begin
+      var command := ByteArrayToString(ArgData);
+      _ProcessMagic(command);
+    end;
+  RPC_RECORD_START:
+    Self.RecordVoiceCommand();
+  RPC_RECORD_STOP:
+    Self.ProcessVoiceCommand();
+  //RPC_RECOGNIZE:
   end;
 end;
 

@@ -21,6 +21,7 @@ type
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
       aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
       const aSenderComponent, aReceiverComponent: string): TArray<System.Byte>;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -45,11 +46,21 @@ begin
     ButtonAct.Caption := 'Start MineServer';
 end;
 
+procedure TFormMain.FormCreate(Sender: TObject);
+begin
+  MineCommander.ProcessMagic :=
+    procedure (command: String)
+    begin
+      PythonDelphiVar1.Value := command;
+      PythonEngine1.ExecString(SynEdit1.Text);
+    end;
+end;
+
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
   aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
   const aSenderComponent, aReceiverComponent: string): TArray<System.Byte>;
 begin
-  var command := ByteArrayToString(aData);
+  MineCommander.ReceiveCommand(aCmd, aData);
 
   //ShowMessage('Command: #' + IntToStr(aCmd) + '' + command + '');
   PythonDelphiVar1.Value := command;
