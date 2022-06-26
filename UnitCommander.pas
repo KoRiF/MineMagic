@@ -43,6 +43,7 @@ type
     property Locality: Boolean read FLocality write SetLocality;
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
     property ProcessMagic: TProc<String> write _ProcessMagic;
+    procedure EstablishLocalProcessingLoop();
   private
 
   End;
@@ -87,6 +88,11 @@ end;
 destructor TMineCommander.Destroy;
 begin
   Recorder.Free;
+end;
+
+procedure TMineCommander.EstablishLocalProcessingLoop;
+begin
+  Self._SendCommandProc := Self.ReceiveCommand; // simulate remote processing
 end;
 
 function TMineCommander.GetLocality: Boolean;

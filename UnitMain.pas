@@ -54,6 +54,7 @@ begin
       PythonDelphiVar1.Value := command;
       PythonEngine1.ExecString(SynEdit1.Text);
     end;
+  MineCommander.EstablishLocalProcessingLoop;
 end;
 
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
