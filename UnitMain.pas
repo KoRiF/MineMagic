@@ -64,8 +64,7 @@ begin
   MineCommander.ReceiveCommand(aCmd, aData);
 
   //ShowMessage('Command: #' + IntToStr(aCmd) + '' + command + '');
-  PythonDelphiVar1.Value := command;
-  PythonEngine1.ExecString(SynEdit1.Text);
+
 end;
 
 end.
