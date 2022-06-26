@@ -72,6 +72,7 @@ type
     procedure AllocBuffer(Sender: TObject; var Buffer: Pointer; var Size: Cardinal);
     procedure ArchBuffer(Sender: TObject; Buffer: Pointer; Size: Cardinal);
     procedure SaveRecord();
+    procedure Prepare(); // for audio components trial only
   End;
 {$ENDIF}
 { TVoiceRecorder }
@@ -186,6 +187,7 @@ begin
   FWaveRecorder.OnBufferReleased := ArchBuffer;
 
   Buffers := TList.Create();
+  Prepare();
 end;
 
 destructor TWinWaveRecorder.Destroy;
@@ -196,6 +198,17 @@ begin
   FWaveRecorder.Free;
 
   inherited;
+end;
+
+procedure TWinWaveRecorder.Prepare;
+begin
+  if not FWaveRecorder.Active then  //dummy step to lure  trial info popup
+  begin
+    StartRec();
+    RecordSize := 0;
+    StopRec();
+    ClearBuffers;
+  end;
 end;
 
 procedure TWinWaveRecorder.SaveRecord;
