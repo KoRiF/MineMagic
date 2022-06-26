@@ -46,8 +46,9 @@ uses System.SysUtils, System.IOUtils
 {$ENDIF}
 ;
 
-type
+
 {$IFDEF MSWINDOWS}
+type
   TWinWaveRecorder = Class(TVoiceRecorder)
     FWaveRecorder: TFRecorder;
   private
@@ -229,13 +230,17 @@ end;
 procedure TWinWaveRecorder.StartRec;
 begin
   RecordSize := 0;
-  
+  if FWaveRecorder.Active then
+    Exit; //incorrect state
   FWaveRecorder.Open;
   FWaveRecorder.Start();
 end;
 
 procedure TWinWaveRecorder.StopRec;
 begin
+  if not FWaveRecorder.Active then
+  Exit; //incorrect state
+
   FWaveRecorder.Stop();
   FWaveRecorder.Close;
   SaveRecord();
