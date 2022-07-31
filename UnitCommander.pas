@@ -80,6 +80,8 @@ end;
 constructor TMineCommander.Create;
 begin
   Recorder := TVoiceRecorder.CreateInstance();
+
+  UnitSpeechRecognizer.filenameini := 'minecommander.ini';
   Recognizer := TSpeechRecognizer.ObtainRecognizer();
 
   InitKeymapping();

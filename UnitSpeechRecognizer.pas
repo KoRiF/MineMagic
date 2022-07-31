@@ -23,6 +23,7 @@ type
     AzureS2T: TAzureSpeechToText;
     procedure InitAzureKey();
   End;
+var filenameini: string;
 
 implementation
 
@@ -34,7 +35,7 @@ procedure TAzureSpeechRecognizer.InitAzureKey;
 var ini: TIniFile;
 begin
   var path := IncludeTrailingPathDelimiter(GetCurrentDir());
-  var iniFilename := path + 'minecommander.ini';
+  var iniFilename := path + filenameini;
   ini := TIniFile.Create(iniFilename);
   try
     _AzureKey := ini.ReadString('Azure', 'Key', '');
@@ -82,4 +83,6 @@ begin
   RESULT := _Recognizer;
 end;
 
+initialization
+  filenameini := 'recognizing.ini';
 end.
