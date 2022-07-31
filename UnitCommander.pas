@@ -109,8 +109,9 @@ end;
 procedure TMineCommander.PassCommand(CommandKey: String; Commandline: String = '');
 var CmdCode: Integer;
 begin
-  if CommandKey = '' then
-    Exit;
+
+  //if CommandKey = '' then
+  //  Exit;
   { DONE : implement send command key to the server }
   var CommandUp := CommandKey.ToUpper;
 
@@ -137,7 +138,7 @@ begin
       Exit();
 
     var voiceText := Self.RecognizeMineVoice(Recorder.RecordFile);//.. receive text from Azure
-    var commandLine := Self.RecognizeMineCommand(voiceText);
+
     var commandKey := Self.RecognizeMineCommand(voiceText);
     PassCommand(commandKey, voiceText);
   end
@@ -169,7 +170,7 @@ end;
 function TMineCommander.RecognizeMineCommand(sentence: String): String;
 begin
   RESULT := '';  { DONE : implement separation of key command }
-  if sentence.StartsWith(MAGIC_KEY) then
+  if UpperCase(sentence).StartsWith(MAGIC_KEY) then
     RESULT := sentence.Substring(1 + Length(MAGIC_KEY));
 
 end;
