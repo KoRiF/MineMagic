@@ -33,7 +33,7 @@ def get_player_movement(playerPos, lastPlayerPos):
     movementY = lastPlayerPos.y - playerPos.y 
     return movementX, movementY, movementZ
     
-def check_player_movement(playerPos):    
+def check_player_movement(movementX, movementY, movementZ):    
     return (movementX < -MOVE_THRSHLD) or (movementX > MOVE_THRSHLD) or (movementZ < -MOVE_THRSHLD) or (movementZ > MOVE_THRSHLD)
 
 def project_until_next_block(playerPos, v):
@@ -70,7 +70,7 @@ def magic_bridge(material = block.DIAMOND_BLOCK):
 
     movementX, movementY, movementZ = get_player_movement(playerPos, lastPlayerPos)
     #Has the player moved more than 0.2 in any horizontal (x,z) direction
-    if (check_player_movement()):        
+    if (check_player_movement(movementX, movementY, movementZ)):        
         #Project players direction forward to the next square
         nextPlayerPos = project_until_next_block(playerPos, (movementX, 0, movementZ))
         #Is the block below the next player pos air, if so fill it in with DIAMOND
