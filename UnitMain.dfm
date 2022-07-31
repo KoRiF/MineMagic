@@ -11,6 +11,7 @@ object FormMain: TFormMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
@@ -21,7 +22,7 @@ object FormMain: TFormMain
     Height = 479
     ActivePage = TabSheetCmdServer
     Align = alClient
-    TabOrder = 1
+    TabOrder = 0
     object TabSheetCmdServer: TTabSheet
       Caption = 'Mine Commands Server'
       object ButtonAct: TButton
@@ -34,8 +35,8 @@ object FormMain: TFormMain
         OnClick = ButtonActClick
       end
     end
-    object TabSheetScripts: TTabSheet
-      Caption = 'Mine Scripts'
+    object TabSheetScripting: TTabSheet
+      Caption = 'Mine Scripting'
       ImageIndex = 1
       object Memo1: TMemo
         Left = 8
@@ -96,6 +97,89 @@ object FormMain: TFormMain
           ExplicitLeft = 8
           ExplicitWidth = 682
         end
+      end
+    end
+    object TabSheetTools: TTabSheet
+      Caption = 'Mine Tools'
+      ImageIndex = 2
+      object ComboBoxBlocks: TComboBox
+        Left = 3
+        Top = 42
+        Width = 145
+        Height = 23
+        TabOrder = 0
+        Text = 'Select block...'
+        Items.Strings = (
+          'AIR                  '
+          'STONE                '
+          'GRASS                '
+          'DIRT                 '
+          'COBBLESTONE          '
+          'WOOD PLANKS          '
+          'SAPLING              '
+          'BEDROCK              '
+          'WATER FLOWING        '
+          'WATER STATIONARY     '
+          'LAVA FLOWING         '
+          'LAVA STATIONARY      '
+          'SAND                 '
+          'GRAVEL               '
+          'GOLD ORE             '
+          'IRON ORE             '
+          'COAL ORE             '
+          'WOOD                 '
+          'LEAVES               '
+          'GLASS                '
+          'LAPIS LAZULI ORE     '
+          'LAPIS LAZULI BLOCK   '
+          'SANDSTONE            '
+          'BED                  '
+          'COBWEB               '
+          'GRASS TALL           '
+          'WOOL                 '
+          'FLOWER YELLOW        '
+          'FLOWER CYAN          '
+          'MUSHROOM BROWN       '
+          'MUSHROOM RED         '
+          'GOLD BLOCK           '
+          'IRON BLOCK           '
+          'STONE SLAB DOUBLE    '
+          'STONE SLAB           '
+          'BRICK BLOCK          '
+          'TNT                  '
+          'BOOKSHELF            '
+          'MOSS STONE           '
+          'OBSIDIAN             '
+          'TORCH                '
+          'FIRE                 '
+          'STAIRS WOOD          '
+          'CHEST                '
+          'DIAMOND ORE          '
+          'DIAMOND BLOCK        '
+          'CRAFTING TABLE       '
+          'FARMLAND             '
+          'FURNACE INACTIVE     '
+          'FURNACE ACTIVE       '
+          'DOOR WOOD            '
+          'LADDER               '
+          'STAIRS COBBLESTONE   '
+          'DOOR IRON            '
+          'REDSTONE ORE         '
+          'SNOW                 '
+          'ICE                  '
+          'SNOW BLOCK           '
+          'CACTUS               '
+          'CLAY                 '
+          'SUGAR CANE           '
+          'FENCE                '
+          'GLOWSTONE BLOCK      '
+          'BEDROCK INVISIBLE    '
+          'STONE BRICK          '
+          'GLASS PANE           '
+          'MELON                '
+          'FENCE GATE           '
+          'GLOWING OBSIDIAN     '
+          'NETHER REACTOR CORE  ')
       end
     end
   end

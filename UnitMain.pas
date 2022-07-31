@@ -18,11 +18,13 @@ type
     PythonGUIInputOutput1: TPythonGUIInputOutput;
     PythonDelphiVar1: TPythonDelphiVar;
     ButtonRunScript: TButton;
+    ComboBoxBlocks: TComboBox;
     SynPythonSyn1: TSynPythonSyn;
     PageControl1: TPageControl;
     TabSheetCmdServer: TTabSheet;
-    TabSheetScripts: TTabSheet;
+    TabSheetScripting: TTabSheet;
     Panel1: TPanel;
+    TabSheetTools: TTabSheet;
     procedure ButtonActClick(Sender: TObject);
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
       aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
