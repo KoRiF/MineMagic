@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, ncSources, PythonEngine,
   Vcl.PythonGUIInputOutput, SynEdit, WrapDelphi, SynEditHighlighter,
-  SynEditCodeFolding, SynHighlighterPython, Vcl.ComCtrls, Vcl.ExtCtrls;
+  SynEditCodeFolding, SynHighlighterPython, Vcl.ComCtrls, Vcl.ExtCtrls,
+  Vcl.Samples.Spin;
 
 type
   TFormMain = class(TForm)
@@ -16,7 +17,7 @@ type
     PythonEngine1: TPythonEngine;
     Memo1: TMemo;
     PythonGUIInputOutput1: TPythonGUIInputOutput;
-    PythonDelphiVar1: TPythonDelphiVar;
+    PythonDelphiVarMessage: TPythonDelphiVar;
     ButtonRunScript: TButton;
     ComboBoxBlocks: TComboBox;
     SynPythonSyn1: TSynPythonSyn;
@@ -25,6 +26,14 @@ type
     TabSheetScripting: TTabSheet;
     Panel1: TPanel;
     TabSheetTools: TTabSheet;
+    PythonDelphiVarLoop: TPythonDelphiVar;
+    PythonDelphiVarLoopCountdown: TPythonDelphiVar;
+    PythonDelphiVarLoopDelay: TPythonDelphiVar;
+    SpinEditLoopCountdown: TSpinEdit;
+    LabelLoopCountdown: TLabel;
+    LabelLoopDelay: TLabel;
+    SpinEditLoopDelay: TSpinEdit;
+    CheckBoxLoop: TCheckBox;
     procedure ButtonActClick(Sender: TObject);
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
       aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
@@ -52,7 +61,7 @@ procedure TFormMain.ButtonRunScriptClick(Sender: TObject);
 begin
   TThread.CreateAnonymousThread(procedure
     begin
-    PythonDelphiVar1.Value := 'hello world of minecraft!';
+    PythonDelphiVarMessage.Value := 'hello world of minecraft!';
     PythonEngine1.ExecString(SynEdit1.Text);
     end
   ).Start();
@@ -81,7 +90,11 @@ begin
   MineCommander.ProcessMagic :=
     procedure (command: String)
     begin
-      PythonDelphiVar1.Value := command;
+      PythonDelphiVarMessage.Value := command;
+      PythonDelphiVarLoop.Value := CheckBoxLoop.Checked;
+      PythonDelphiVarLoopCountdown.Value := SpinEditLoopCountdown.Value;
+      PythonDelphiVarLoopDelay.Value := SpinEditLoopDelay.Value/1000;
+
       PythonEngine1.ExecString(SynEdit1.Text);
     end;
   MineCommander.EstablishLocalProcessingLoop;

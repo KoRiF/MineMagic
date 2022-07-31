@@ -26,8 +26,8 @@ object FormMain: TFormMain
     object TabSheetCmdServer: TTabSheet
       Caption = 'Mine Commands Server'
       object ButtonAct: TButton
-        Left = 264
-        Top = 96
+        Left = 0
+        Top = 32
         Width = 129
         Height = 25
         Caption = 'Start MineServer'
@@ -100,9 +100,23 @@ object FormMain: TFormMain
     object TabSheetTools: TTabSheet
       Caption = 'Mine Tools'
       ImageIndex = 2
+      object LabelLoopCountdown: TLabel
+        Left = 168
+        Top = 99
+        Width = 132
+        Height = 15
+        Caption = 'Initital Loop Countdown '
+      end
+      object LabelLoopDelay: TLabel
+        Left = 168
+        Top = 139
+        Width = 84
+        Height = 15
+        Caption = 'Loop Delay, ms '
+      end
       object ComboBoxBlocks: TComboBox
-        Left = 3
-        Top = 42
+        Left = 543
+        Top = 58
         Width = 145
         Height = 23
         TabOrder = 0
@@ -179,6 +193,36 @@ object FormMain: TFormMain
           'GLOWING OBSIDIAN     '
           'NETHER REACTOR CORE  ')
       end
+      object SpinEditLoopCountdown: TSpinEdit
+        Left = 306
+        Top = 96
+        Width = 105
+        Height = 24
+        MaxValue = 1000
+        MinValue = 0
+        TabOrder = 1
+        Value = 1000
+      end
+      object SpinEditLoopDelay: TSpinEdit
+        Left = 306
+        Top = 136
+        Width = 105
+        Height = 24
+        MaxValue = 0
+        MinValue = 10
+        TabOrder = 2
+        Value = 500
+      end
+      object CheckBoxLoop: TCheckBox
+        Left = 168
+        Top = 61
+        Width = 113
+        Height = 17
+        Caption = 'Run Magic Loop'
+        Checked = True
+        State = cbChecked
+        TabOrder = 3
+      end
     end
   end
   object ncServerSource1: TncServerSource
@@ -199,7 +243,7 @@ object FormMain: TFormMain
     Left = 608
     Top = 8
   end
-  object PythonDelphiVar1: TPythonDelphiVar
+  object PythonDelphiVarMessage: TPythonDelphiVar
     Engine = PythonEngine1
     Module = '__main__'
     VarName = 'mine_message'
@@ -214,5 +258,26 @@ object FormMain: TFormMain
     SystemAttri.Style = [fsBold, fsUnderline]
     Left = 520
     Top = 8
+  end
+  object PythonDelphiVarLoop: TPythonDelphiVar
+    Engine = PythonEngine1
+    Module = '__main__'
+    VarName = 'mine_loop'
+    Left = 444
+    Top = 66
+  end
+  object PythonDelphiVarLoopCountdown: TPythonDelphiVar
+    Engine = PythonEngine1
+    Module = '__main__'
+    VarName = 'mine_countdown'
+    Left = 436
+    Top = 114
+  end
+  object PythonDelphiVarLoopDelay: TPythonDelphiVar
+    Engine = PythonEngine1
+    Module = '__main__'
+    VarName = 'mine_loopdelay'
+    Left = 436
+    Top = 162
   end
 end
