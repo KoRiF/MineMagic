@@ -94,8 +94,6 @@ object FormMain: TFormMain
           Caption = 'Run Script'
           TabOrder = 1
           OnClick = ButtonRunScriptClick
-          ExplicitLeft = 8
-          ExplicitWidth = 682
         end
       end
     end
@@ -212,6 +210,8 @@ object FormMain: TFormMain
     Options.AutoDetectEnabled = False
     Options.AutoDetectLineLimit = 0
     Options.Visible = False
+    KeyAttri.Foreground = clOlive
+    SystemAttri.Style = [fsBold, fsUnderline]
     Left = 520
     Top = 8
   end
