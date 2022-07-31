@@ -72,7 +72,12 @@ begin
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
+const
+  SCRIPTFILE_PY = 'minescript.py';
 begin
+  if FileExists(SCRIPTFILE_PY) then
+    SynEdit1.Lines.LoadFromFile(SCRIPTFILE_PY);
+
   MineCommander.ProcessMagic :=
     procedure (command: String)
     begin
