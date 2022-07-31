@@ -96,6 +96,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  MineCommander.Locality := True;
   Self.CheckBoxUseClientRecording.IsChecked := MineCommander.Locality;
   MineCommander.SendCommandProc := procedure (cmd: Integer; bytes: TArray<System.Byte>)
     begin
