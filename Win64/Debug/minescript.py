@@ -75,7 +75,7 @@ def magic_bridge(material = block.DIAMOND_BLOCK):
         nextPlayerPos = project_until_next_block(playerPos, (movementX, 0, movementZ))
         #Is the block below the next player pos air, if so fill it in with DIAMOND
         blockBelowPos = get_block_below_position(nextPlayerPos)
-        mc.getBlock(blockBelowPos)
+        blockBelow = mc.getBlock(blockBelowPos)
         if (blockBelow == block.AIR) or (blockBelow == block.WATER):
             mc.setBlock(blockBelowPos.x, blockBelowPos.y, blockBelowPos.z, material)
         #Store players last position
