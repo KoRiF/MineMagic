@@ -47,6 +47,7 @@ object FormMain: TFormMain
     Gutter.Font.Height = -11
     Gutter.Font.Name = 'Courier New'
     Gutter.Font.Style = []
+    Highlighter = SynPythonSyn1
     Lines.Strings = (
       'from mcpi.minecraft import Minecraft'
       'mc = Minecraft.create()'
@@ -85,6 +86,13 @@ object FormMain: TFormMain
     Module = '__main__'
     VarName = 'mine_message'
     Left = 448
+    Top = 8
+  end
+  object SynPythonSyn1: TSynPythonSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
+    Left = 520
     Top = 8
   end
 end
