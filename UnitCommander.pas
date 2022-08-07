@@ -2,7 +2,7 @@ unit UnitCommander;
 
 interface
 
-uses UnitVoiceRecorder, UnitSpeechRecognizer,
+uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitMineScripter,
   System.Generics.Collections, System.SysUtils;
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
@@ -10,6 +10,7 @@ type
   TMineCommander = Class
     Recorder: TVoiceRecorder;
     Recognizer: TSpeechRecognizer;
+    Scripter: TMineScripter;
   private
     const MAGIC_KEY = 'MAGIC';
     RPC_MAGIC = 0;
@@ -36,6 +37,7 @@ type
     function RecognizeMineVoice(filename: String): String;
     function RecognizeMineCommand(sentence: String): String;
   private
+    _RunScriptProc: TProc<String>;
     _ProcessMagic: TProc<String>;
     _SendCommandProc: TProc<Integer, TArray<System.Byte>>;
     function GetLocality(): Boolean;
@@ -43,8 +45,16 @@ type
     property Locality: Boolean read FLocality write SetLocality;
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
     property ProcessMagic: TProc<String> read _ProcessMagic write _ProcessMagic;
+    property RunScriptProc: TProc<String> write _RunScriptProc;
+  protected
     procedure EstablishLocalProcessingLoop();
+    procedure InitScripting();
+  public
+    type TRole =  (AsServer, AsClient);
+    procedure Configure(role: TRole);
+
   private
+    procedure ConfigureAsServer;
 
   End;
 
@@ -77,6 +87,20 @@ end;
 
 { TMineCommander }
 
+procedure TMineCommander.Configure(role: TRole);
+begin
+  case role of
+    AsServer: ConfigureAsServer();
+    AsClient: EXIT;
+  end;
+end;
+
+procedure TMineCommander.ConfigureAsServer;
+begin
+  EstablishLocalProcessingLoop();
+  InitScripting;
+end;
+
 constructor TMineCommander.Create;
 begin
   Recorder := TVoiceRecorder.CreateInstance();
@@ -106,6 +130,14 @@ procedure TMineCommander.InitKeymapping;
 begin
   COMMANDKEYMAP := TDictionary<String, Integer>.Create();
   COMMANDKEYMAP.Add(MAGIC_KEY, RPC_MAGIC);
+end;
+
+procedure TMineCommander.InitScripting;
+begin
+  UnitMineScripter.filenameini := 'minecommander.ini';
+  Self.Scripter := TMineScripter.ObtainScripter(_RunScriptProc);
+
+  Self.Scripter.InitScripts()
 end;
 
 procedure TMineCommander.PassCommand(CommandKey: String; Commandline: String = '');

@@ -96,7 +96,12 @@ begin
 
       PythonEngine1.ExecString(SynEdit1.Text);
     end;
-  MineCommander.EstablishLocalProcessingLoop;
+  MineCommander.RunScriptProc :=
+    procedure (script: String)
+    begin
+      PythonEngine1.ExecString(script);
+    end;
+  MineCommander.Configure(AsServer);
 end;
 
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
