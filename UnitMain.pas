@@ -61,8 +61,7 @@ procedure TFormMain.ButtonRunScriptClick(Sender: TObject);
 begin
   TThread.CreateAnonymousThread(procedure
     begin
-    PythonDelphiVarMessage.Value := 'hello world of minecraft!';
-    PythonEngine1.ExecString(SynEdit1.Text);
+    MineCommander.ProcessMagic('hello world of minecraft!');
     end
   ).Start();
 end;

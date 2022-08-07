@@ -42,7 +42,7 @@ type
   public
     property Locality: Boolean read FLocality write SetLocality;
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
-    property ProcessMagic: TProc<String> write _ProcessMagic;
+    property ProcessMagic: TProc<String> read _ProcessMagic write _ProcessMagic;
     procedure EstablishLocalProcessingLoop();
   private
 
