@@ -73,6 +73,8 @@
         <DCC_UnitSearchPath>.\Azure-Cognitive-Services\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <PreBuildEvent><![CDATA[xcopy.exe .\pyscripts\*.py $(OUTPUTDIR) /Y
+$(PreBuildEvent)]]></PreBuildEvent>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>vclwinx;DataSnapServer;CEF4Delphi_FMX;FMX_MediaLabBasicPkg;fmx;vclie;DbxCommonDriver;bindengine;IndyIPCommon;VCLRESTComponents;DBXMSSQLDriver;FireDACCommonODBC;emsclient;aurelius;appanalytics;IndyProtocols;vclx;dbxcds;vcledge;FMX_InstrumentLabPkg;FmxTeeUI;DBXFirebirdDriver;ControlLabPkg;FireDACSqliteDriver;DbxClientDriver;FrameStandPackage_11;soapmidas;Mitov_FMX_BasicLab;TeeUI;OpenWireEditorBasicPkg;dbexpress;Python;OpenWireStudioAudioHostPkg;SignalLabScopePkg;inet;VideoLabBasicPkg;PythonVcl;vcltouch;P4DOpenCV;AudioLabEssentialPkg;Mitov_VCL_VisionLab;FireDACDBXDriver;fmxdae;OpenWireBindingFmxPkg;InstrumentLabDigitalPkg;tmsbcl;SignalLabGenericBasicPkg;CustomIPTransport;FireDACMSSQLDriver;UserLabBasicPkg;dclFMXOpenCV;Mitov_VCL_VideoLab_Additional;IndySystem;dclP4DPillow280;VideoLabAdditionalPkg;VideoLabPkg;rclVCLOpenCV;OpenWireBindingDatabasePkg;IntelligenceLabPkg;vclFireDAC;FMXAppWizard;FMXTMSFNCCorePkgDXE14;FireDACCommon;DataSnapServerMidas;FireDACODBCDriver;emsserverresource;Mitov_VCL_BasicLab;OpenWireStudioVideoHostPkg;FMX_SignalLabScopePkg;P4DScikitLearn;P4DPyTorch;bindcompdbx;FMX_InstrumentLabDigitalPkg;rtl;FireDACMySQLDriver;Mitov_VCL_AudioLab_Essential;Mitov_BasicLab;remotedb;rclFMXOpenCV;DBXSqliteDriver;PackageComponents;InstrumentLabPkg;VirtualTreesDR;DBXSybaseASEDriver;PlotLabPkg;AudioLabBasicPkg;vclimg;DataSnapFireDAC;FMX_VideoLabBasicPkg;inetdbxpress;FireDAC;P4DPillow;xmlrtl;MediaLabBasicPkg;P4DEnvironment;dsnap;xdata;FireDACDb2Driver;DBXOracleDriver;DBXInformixDriver;FMX_UserLabBasicPkg;fmxobj;bindcompvclsmp;DataSnapNativeClient;VisionLabPkg;Mitov_VCL_VideoLab_Basic;DatasnapConnectorsFreePascal;Spring.Data;P4DMatplotLib;emshosting;sparkle;FMXTMSFNCMapsPkgDXE14;Mitov_VCL_CommunicationLab_Basic;FireDACCommonDriver;IndyIPClient;Mitov_Runtime;SignalLabAdditionalPkg;bindcompvclwinx;emsedge;bindcompfmx;TextLabBasicPkg;inetdb;LogicLabBasicPkg;OpenWireStudioHostPkg;FireDACASADriver;Tee;Mitov_VCL_AudioLab_Basic;Mitov_VCL_VideoLab;TimingLabBasicPkg;vclactnband;fmxFireDAC;FireDACInfxDriver;P4DPyPackage;DBXMySQLDriver;VclSmp;DataSnapCommon;Mitov_FMX_Windows_VideoLab_Basic;fmxase;VCLTMSFNCMapsPkgDXE14;DBXOdbcDriver;dbrtl;FireDACOracleDriver;Mitov_VCL_AudioLab;TeeDB;FireDACMSAccDriver;DataSnapIndy10ServerTransport;P4DTensorFlow;DataSnapConnectors;vcldsnap;DBXInterBaseDriver;dclVCLOpenCV;FireDACMongoDBDriver;PngComponentsD;OpenWireEditorPkg;FireDACTDataDriver;FMX_PlotLabPkg;VCLTMSFNCCorePkgDXE14;LogicLabPkg;vcldb;MicroCoinUtils;SignalLabGenericPkg;CommunicationLabPkg;bindcomp;IndyCore;RESTBackendComponents;Mitov_AnimationLab;FireDACADSDriver;RESTComponents;IndyIPServer;vcl;dsnapxml;adortl;dsnapcon;DataSnapClient;DataSnapProviderClient;SignalLabPkg;DBXDb2Driver;OpenWireBindingPkg;emsclientfiredac;FireDACPgDriver;FireDACDSDriver;Mitov_VCL_Runtime;OpenWirePkg;VideoLabGenericBasicPkg;tethering;AudioLabGenericBasicPkg;bindcompvcl;CommunicationLabBasicPkg;CloudService;DBXSybaseASADriver;P4DNumPy;OpenWireBindingVclPkg;FMXTee;PythonFmx;AudioLabPkg;MediaLabPkg;soaprtl;SignalLabBasicPkg;soapserver;FireDACIBDriver;$(DCC_UsePackage)</DCC_UsePackage>
@@ -971,4 +973,36 @@
     <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
     <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
     <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win32'">
+        <PreBuildEvent>xcopy.exe .\pyscripts\*.py $(OUTPUTDIR) /Y</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent/>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
+        <PreBuildEvent>xcopy.exe .\pyscripts\*.py $(OUTPUTDIR) /Y</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent/>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win32'">
+        <PreBuildEvent>xcopy.exe .\pyscripts\*.py $(OUTPUTDIR) /Y</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent/>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
+        <PreBuildEvent>xcopy.exe .\pyscripts\*.py $(OUTPUTDIR) /Y</PreBuildEvent>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent/>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
 </Project>
