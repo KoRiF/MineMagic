@@ -280,4 +280,16 @@ object FormMain: TFormMain
     Left = 436
     Top = 162
   end
+  object PythonModule1: TPythonModule
+    Engine = PythonEngine1
+    Events = <
+      item
+        Name = 'PythonEvent0_mine_loop_callback'
+        OnExecute = PythonModule1Events0Execute
+      end>
+    ModuleName = 'mine_module'
+    Errors = <>
+    Left = 268
+    Top = 74
+  end
 end

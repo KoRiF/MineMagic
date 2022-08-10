@@ -34,12 +34,15 @@ type
     LabelLoopDelay: TLabel;
     SpinEditLoopDelay: TSpinEdit;
     CheckBoxLoop: TCheckBox;
+    PythonModule1: TPythonModule;
     procedure ButtonActClick(Sender: TObject);
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
       aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
       const aSenderComponent, aReceiverComponent: string): TArray<System.Byte>;
     procedure ButtonRunScriptClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure PythonModule1Events0Execute(Sender: TObject; PSelf,
+      Args: PPyObject; var Result: PPyObject);
   private
     { Private declarations }
     const
@@ -59,6 +62,8 @@ uses UnitCommander;
 
 procedure TFormMain.ButtonRunScriptClick(Sender: TObject);
 begin
+  MineCommander.ProcessMagic('hello world of minecraft!');
+  EXIT;
   TThread.CreateAnonymousThread(procedure
     begin
     MineCommander.ProcessMagic('hello world of minecraft!');
@@ -86,7 +91,7 @@ begin
   if FileExists(SCRIPTFILE_PY) then
     SynEdit1.Lines.LoadFromFile(SCRIPTFILE_PY);
 
-  MineCommander.ProcessMagic :=
+  MineCommander.RunMagic :=
     procedure (command: String)
     begin
       PythonDelphiVarMessage.Value := command;
@@ -96,6 +101,15 @@ begin
 
       PythonEngine1.ExecString(SynEdit1.Text);
     end;
+
+  MineCommander.ProcessMagic :=
+    procedure (command: String)
+    begin
+      PythonDelphiVarMessage.Value := command;
+      var script := MineCommander.GenerateMagicScript(command);
+      PythonEngine1.ExecString(script);
+    end;
+
   MineCommander.RunScriptProc :=
     procedure (script: String)
     begin
@@ -112,6 +126,12 @@ begin
 
   //ShowMessage('Command: #' + IntToStr(aCmd) + '' + command + '');
 
+end;
+
+procedure TFormMain.PythonModule1Events0Execute(Sender: TObject; PSelf,
+  Args: PPyObject; var Result: PPyObject);
+begin
+         { TODO : implement loop callback }
 end;
 
 end.

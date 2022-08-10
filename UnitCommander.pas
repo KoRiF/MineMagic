@@ -38,14 +38,18 @@ type
     function RecognizeMineCommand(sentence: String): String;
   private
     _RunScriptProc: TProc<String>;
+    _RunMagic: TProc<String>;
     _ProcessMagic: TProc<String>;
     _SendCommandProc: TProc<Integer, TArray<System.Byte>>;
     function GetLocality(): Boolean;
+    procedure ParseCommand(command: String; out key: String; out Activate: Boolean; out args: String);
   public
     property Locality: Boolean read FLocality write SetLocality;
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
     property ProcessMagic: TProc<String> read _ProcessMagic write _ProcessMagic;
+    property RunMagic: TProc<String> read _RunMagic write _RunMagic;
     property RunScriptProc: TProc<String> write _RunScriptProc;
+    function GenerateMagicScript(command: String): String;
   protected
     procedure EstablishLocalProcessingLoop();
     procedure InitScripting();
@@ -121,6 +125,30 @@ begin
   Self._SendCommandProc := Self.ReceiveCommand; // simulate remote processing
 end;
 
+function TMineCommander.GenerateMagicScript(command: String): String;
+var  key: String;
+  args: String;
+  Activate: Boolean;
+  cmdRec: TCommandRec;
+begin
+  command := Trim(command);
+  if command.StartsWith(MAGIC_KEY, True) then
+  begin
+    command := UpperCase(command.Substring(Length(MAGIC_KEY)));
+    ParseCommand(command, key, Activate, args);
+    if key > '' then
+    begin
+      cmdRec := _MagicCommands[key];
+      if Activate then
+        RESULT := cmdRec.start
+      else
+        RESULT := cmdRec.stop;
+    end;
+  end
+  else
+    RESULT := 'print("' + command + '")';
+end;
+
 function TMineCommander.GetLocality: Boolean;
 begin
   RESULT := Assigned(Recorder.Mic) and Assigned(Self.Recognizer);
@@ -137,7 +165,7 @@ begin
   UnitMineScripter.filenameini := 'minecommander.ini';
   Self.Scripter := TMineScripter.ObtainScripter(_RunScriptProc);
 
-  Self.Scripter.InitScripts()
+  Self.Scripter.InitScripts();
 end;
 
 procedure TMineCommander.PassCommand(CommandKey: String; Commandline: String = '');
@@ -153,6 +181,29 @@ begin
     PassCommand(CmdCode, Commandline)
   else
     PassCommand(0, Commandline);
+
+end;
+
+procedure TMineCommander.ParseCommand(command: String; out key: String;
+  out Activate: Boolean; out args: String);
+begin
+  var ss := command.Split([' ']);
+  for var s in ss do
+  begin
+    if _MagicCommands.ContainsKey(s) then
+    begin
+      key := s;
+      Activate := True;
+      CONTINUE;
+    end;
+    if (s = 'TERMINATE') then
+    begin
+      Activate := False;
+      CONTINUE;
+    end;
+
+    args := args + ' ' + s;
+  end;
 
 end;
 
