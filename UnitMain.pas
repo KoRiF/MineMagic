@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, ncSources, PythonEngine,
   Vcl.PythonGUIInputOutput, SynEdit, WrapDelphi, SynEditHighlighter,
   SynEditCodeFolding, SynHighlighterPython, Vcl.ComCtrls, Vcl.ExtCtrls,
-  Vcl.Samples.Spin;
+  Vcl.Samples.Spin, Vcl.CheckLst;
 
 type
   TFormMain = class(TForm)
@@ -34,6 +34,7 @@ type
     LabelLoopDelay: TLabel;
     SpinEditLoopDelay: TSpinEdit;
     CheckBoxLoop: TCheckBox;
+    CheckListBoxCommands: TCheckListBox;
     PythonModule1: TPythonModule;
     procedure ButtonActClick(Sender: TObject);
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
@@ -69,6 +70,7 @@ begin
     MineCommander.ProcessMagic('hello world of minecraft!');
     end
   ).Start();
+
 end;
 
 procedure TFormMain.ButtonActClick(Sender: TObject);
@@ -116,6 +118,7 @@ begin
       PythonEngine1.ExecString(script);
     end;
   MineCommander.Configure(AsServer);
+  MineCommander.LoadCommands(Self.CheckListBoxCommands.Items);
 end;
 
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;

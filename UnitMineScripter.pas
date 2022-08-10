@@ -51,31 +51,29 @@ begin
   end;
 end;
 
-procedure TMineScripter.LoadScripts;
+procedure TMineScripter.LoadScripts();
 var ini: TIniFile;
-  IniScriptsList: TStringList;
+
 begin
   var path := IncludeTrailingPathDelimiter(GetCurrentDir());
   var iniFilename := path + filenameini;
   ini := TIniFile.Create(iniFilename);
   try
-    IniScriptsList := TStringList.Create;
-    ini.ReadSection('SCRIPTS', IniScriptsList);
-    for var  k:= 0 to IniScriptsList.Count - 1 do
+    ini.ReadSectionValues('SCRIPTS', Self._ScriptsList);
+    for var  k:= 0 to Self._ScriptsList.Count - 1 do
     begin
-      var scriptkey := IniScriptsList.KeyNames[k];
-      var scriptpy := ini.ReadString('SCRIPTS', scriptkey, '');
-      Self._ScriptsList.Values[scriptkey] := scriptpy;
+      var scriptkey := Self._ScriptsList.KeyNames[k];
+      var scriptpy := Self._ScriptsList.Values[scriptkey];
 
       var script := TStringList.Create();
       script.LoadFromFile(scriptpy);
 
       Self._ScriptsList.Objects[k] := script;
     end;
+
   finally
     ini.Free();
   end;
-
 end;
 
 class function TMineScripter.ObtainScripter(RunScriptProc: TProc<String>): TMineScripter;

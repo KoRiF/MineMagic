@@ -3,9 +3,15 @@ unit UnitCommander;
 interface
 
 uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitMineScripter,
-  System.Generics.Collections, System.SysUtils;
+  System.Generics.Collections, System.SysUtils, System.Classes;
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
+
+  TCommandRec = Record
+    key: String;
+    start: String;
+    stop: String;
+  End;
 
   TMineCommander = Class
     Recorder: TVoiceRecorder;
@@ -41,7 +47,7 @@ type
     _RunMagic: TProc<String>;
     _ProcessMagic: TProc<String>;
     _SendCommandProc: TProc<Integer, TArray<System.Byte>>;
-    function GetLocality(): Boolean;
+    _MagicCommands: TDictionary<String, TCommandRec>;
     procedure ParseCommand(command: String; out key: String; out Activate: Boolean; out args: String);
   public
     property Locality: Boolean read FLocality write SetLocality;
@@ -49,6 +55,7 @@ type
     property ProcessMagic: TProc<String> read _ProcessMagic write _ProcessMagic;
     property RunMagic: TProc<String> read _RunMagic write _RunMagic;
     property RunScriptProc: TProc<String> write _RunScriptProc;
+    procedure LoadCommands(Commands: TStrings);
     function GenerateMagicScript(command: String): String;
   protected
     procedure EstablishLocalProcessingLoop();
@@ -65,6 +72,8 @@ type
 var MineCommander: TMineCommander;
 
 implementation
+
+uses IniFiles;
 
 function StringToByteArray(const s: string): TArray<System.Byte>;
 begin
@@ -112,6 +121,7 @@ begin
   UnitSpeechRecognizer.filenameini := 'minecommander.ini';
   Recognizer := TSpeechRecognizer.ObtainRecognizer();
 
+  _MagicCommands := TDictionary<String, TCommandRec>.Create();
   InitKeymapping();
 end;
 
@@ -166,6 +176,35 @@ begin
   Self.Scripter := TMineScripter.ObtainScripter(_RunScriptProc);
 
   Self.Scripter.InitScripts();
+end;
+
+procedure TMineCommander.LoadCommands(Commands: TStrings);
+var IniFile: TIniFile;
+  cmdRec : TCommandRec;
+begin
+  var CommandList := TStringList.Create;
+  var filenameini := 'minecommander.ini';
+  var path := IncludeTrailingPathDelimiter(GetCurrentDir());
+  var iniFilename := path + filenameini;
+  IniFile := TIniFile.Create(iniFilename);
+
+  try
+    IniFile.ReadSection('COMMANDS', Commands);
+
+    IniFile.ReadSectionValues('COMMANDS', CommandList);
+    for var command in  Commands do
+    begin
+      cmdRec.key := command;
+      cmdRec.start := CommandList.Values[command];
+      _MagicCommands[command] := cmdRec;
+    end;
+
+  finally
+
+    IniFile.Free();
+    CommandList.Free();
+  end;
+
 end;
 
 procedure TMineCommander.PassCommand(CommandKey: String; Commandline: String = '');

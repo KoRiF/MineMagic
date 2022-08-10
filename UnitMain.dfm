@@ -223,6 +223,14 @@ object FormMain: TFormMain
         State = cbChecked
         TabOrder = 3
       end
+      object CheckListBoxCommands: TCheckListBox
+        Left = 0
+        Top = 309
+        Width = 201
+        Height = 137
+        ItemHeight = 15
+        TabOrder = 4
+      end
     end
   end
   object ncServerSource1: TncServerSource
