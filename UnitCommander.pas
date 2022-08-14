@@ -7,10 +7,42 @@ uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitMineScripter,
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
 
+  IMineCommandline = Interface
+    ['{7D6BFCB5-8B50-47F7-9D11-E3B37F52542B}']
+    function GetObject: TObject;
+    function getKeyword: String;
+    function getCommandline: String;
+    function getParametersline: String;
+    property KeyWord: String read getKeyword;
+    property Cmdline: String read getCommandline;
+    property Paramsline: String read getParametersline;
+  End;
+
   TCommandRec = Record
-    key: String;
-    start: String;
-    stop: String;
+    Keyword: String;
+    InstatinationScript: String;
+    _ref: IMineCommandLine;
+    function ParseCommand(cmdline: string): IMineCommandline;
+  End;
+
+  TMineCommandline = Class(TInterfacedObject, IMineCommandline)
+  private
+    _CommandRecord: TCommandRec;
+    constructor Create(commandline: String);
+  public // for memory leaks debugging
+    destructor Destroy(); override;
+  private
+    _cmdline: String;
+    _parampos: Integer;
+
+  public
+    function GetObject: TObject;
+    function getKeyword: String;
+    function getCommandline: String;
+    function getParametersline: String;
+    property KeyWord: String read getKeyword;
+    property Cmdline: String read getCommandline;
+    property Paramsline: String read getParametersline;
   End;
 
   TMineCommander = Class
@@ -26,6 +58,7 @@ type
 
     var COMMANDKEYMAP: TDictionary<String, Integer>;
     procedure InitKeymapping();
+
   private
     FLocality: Boolean;
     procedure SetLocality(const Value: Boolean);
@@ -43,20 +76,27 @@ type
     function RecognizeMineVoice(filename: String): String;
     function RecognizeMineCommand(sentence: String): String;
   private
+    _WillList: TThreadList;
     _RunScriptProc: TProc<String>;
     _RunMagic: TProc<String>;
     _ProcessMagic: TProc<String>;
     _SendCommandProc: TProc<Integer, TArray<System.Byte>>;
     _MagicCommands: TDictionary<String, TCommandRec>;
-    procedure ParseCommand(command: String; out key: String; out Activate: Boolean; out args: String);
+    function ParseCommand(command: String; out key: String; out args: String): IMineCommandline;
+
   public
     property Locality: Boolean read FLocality write SetLocality;
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
     property ProcessMagic: TProc<String> read _ProcessMagic write _ProcessMagic;
     property RunMagic: TProc<String> read _RunMagic write _RunMagic;
     property RunScriptProc: TProc<String> write _RunScriptProc;
+
     procedure LoadCommands(Commands: TStrings);
-    function GenerateMagicScript(command: String): String;
+    function ListKeywords(Prefix: Char = '['; delimiter: String = ', '; Postfix: Char = ']'): String;
+
+    procedure NoteWill(command: string);
+    function PerformWill(): IMineCommandLine;
+    function InstantiateScript(keyword: String): String;
   protected
     procedure EstablishLocalProcessingLoop();
     procedure InitScripting();
@@ -122,41 +162,22 @@ begin
   Recognizer := TSpeechRecognizer.ObtainRecognizer();
 
   _MagicCommands := TDictionary<String, TCommandRec>.Create();
+  _WillList := TThreadList.Create();
   InitKeymapping();
 end;
 
 destructor TMineCommander.Destroy;
 begin
-  Recorder.Free;
+  _WillList.Free;
+  _MagicCommands.Free;
+  Recognizer := nil;
+  Recorder := nil;
+  inherited;
 end;
 
 procedure TMineCommander.EstablishLocalProcessingLoop;
 begin
   Self._SendCommandProc := Self.ReceiveCommand; // simulate remote processing
-end;
-
-function TMineCommander.GenerateMagicScript(command: String): String;
-var  key: String;
-  args: String;
-  Activate: Boolean;
-  cmdRec: TCommandRec;
-begin
-  command := Trim(command);
-  if command.StartsWith(MAGIC_KEY, True) then
-  begin
-    command := UpperCase(command.Substring(Length(MAGIC_KEY)));
-    ParseCommand(command, key, Activate, args);
-    if key > '' then
-    begin
-      cmdRec := _MagicCommands[key];
-      if Activate then
-        RESULT := cmdRec.start
-      else
-        RESULT := cmdRec.stop;
-    end;
-  end
-  else
-    RESULT := 'print("' + command + '")';
 end;
 
 function TMineCommander.GetLocality: Boolean;
@@ -178,6 +199,32 @@ begin
   Self.Scripter.InitScripts();
 end;
 
+function TMineCommander.InstantiateScript(keyword: String): String;
+begin
+  keyword := keyword.ToUpper;
+  if _MagicCommands.ContainsKey(keyword) then
+    RESULT := _MagicCommands[keyword].InstatinationScript
+  else
+    RESULT := '';
+end;
+
+function TMineCommander.ListKeywords(Prefix: Char; delimiter: String; Postfix: Char): String;
+const STR_QOUTA = '"';
+var Builder: TStringBuilder;
+begin
+ Builder := TStringBuilder.Create(Prefix);
+ var keywords := _MagicCommands.Keys.ToArray();
+ for var keyword in keywords do
+   Builder.AppendFormat('%s%s%s',[STR_QOUTA,keyword,STR_QOUTA]).Append(delimiter);
+
+  var L := Builder.Length;
+  var dl := Length(delimiter);
+  if L > dl then
+    Builder.Remove(L - dl, dl);
+
+  RESULT := Builder.Append(Postfix).ToString();
+end;
+
 procedure TMineCommander.LoadCommands(Commands: TStrings);
 var IniFile: TIniFile;
   cmdRec : TCommandRec;
@@ -194,9 +241,9 @@ begin
     IniFile.ReadSectionValues('COMMANDS', CommandList);
     for var command in  Commands do
     begin
-      cmdRec.key := command;
-      cmdRec.start := CommandList.Values[command];
-      _MagicCommands[command] := cmdRec;
+      cmdRec.Keyword := command;
+      cmdRec.InstatinationScript := CommandList.Values[command];
+      _MagicCommands.Add(command, cmdRec);
     end;
 
   finally
@@ -204,6 +251,34 @@ begin
     IniFile.Free();
     CommandList.Free();
   end;
+
+end;
+
+procedure TMineCommander.NoteWill(command: string);
+var  key: String;
+  args: String;
+
+  cmdRec: TCommandRec;
+begin
+  command := Trim(command);
+  if command.StartsWith(MAGIC_KEY, True) then
+  begin
+    command := Trim(UpperCase(command.Substring(Length(MAGIC_KEY))));
+    var CmdObj := ParseCommand(command, key, args);
+
+    if CmdObj <> nil then
+    begin
+      var Wills := _WillList.LockList();
+      try
+        Wills.Add(CmdObj);
+      finally
+        _WillList.UnlockList;
+      end;
+    end;
+  end;
+
+
+
 
 end;
 
@@ -223,33 +298,46 @@ begin
 
 end;
 
-procedure TMineCommander.ParseCommand(command: String; out key: String;
-  out Activate: Boolean; out args: String);
+function TMineCommander.ParseCommand(command: String; out key: String; out args: String): IMineCommandline;
 begin
+  var argsbuilder := TStringBuilder.Create('');
   var ss := command.Split([' ']);
   for var s in ss do
   begin
     if _MagicCommands.ContainsKey(s) then
     begin
       key := s;
-      Activate := True;
+      var CmdRec := _MagicCommands[key];
+      RESULT := CmdRec.ParseCommand(command);
+      cmdRec._ref := RESULT;
+      _MagicCommands[key] := cmdRec;
       CONTINUE;
     end;
-    if (s = 'TERMINATE') then
-    begin
-      Activate := False;
-      CONTINUE;
-    end;
-
-    args := args + ' ' + s;
+    argsbuilder := argsbuilder.AppendFormat(' %s', [s]);
   end;
-
+  args := argsbuilder.ToString();
 end;
 
 procedure TMineCommander.PassCommand(Cmd: Integer; ArgData: String = '');
 begin
   var CommandBytes := StringToByteArray(ArgData);
   Self._SendCommandProc(Cmd, CommandBytes);
+end;
+
+function TMineCommander.PerformWill: IMineCommandLine;
+begin
+  var Wills := _WillList.LockList();
+  try
+    if Wills.Count > 0 then
+    begin
+      RESULT := IMineCommandLine(Wills[0]);
+      Wills.Delete(0);
+    end
+    else
+      RESULT := nil;
+  finally
+    _WillList.UnlockList;
+  end;
 end;
 
 procedure TMineCommander.ProcessVoiceCommand(locally: Boolean);
@@ -315,6 +403,58 @@ end;
 procedure TMineCommander.SetLocality(const Value: Boolean);
 begin
   FLocality := Value;
+end;
+
+
+{ TMineCommandline }
+
+
+constructor TMineCommandline.Create(commandline: String);
+begin
+  Self._cmdline := commandline;
+end;
+
+destructor TMineCommandline.Destroy;
+begin
+  //
+  inherited;
+end;
+
+
+function TMineCommandline.getCommandline: String;
+begin
+  RESULT := Self._cmdline;
+end;
+
+function TMineCommandline.getKeyword: String;
+begin
+  RESULT := Self._CommandRecord.Keyword;
+end;
+
+function TMineCommandline.GetObject: TObject;
+begin
+  RESULT := Self;
+end;
+
+function TMineCommandline.getParametersline: String;
+begin
+  RESULT := Self._cmdline.Substring(_parampos);
+end;
+
+{ TCommandRec }
+
+function TCommandRec.ParseCommand(cmdline: string): IMineCommandline;
+begin
+  if cmdline.StartsWith(Keyword, True) then
+  begin
+    var Commandline := TMineCommandline.Create(cmdline);
+    Commandline._parampos := Length(Keyword) + 1;
+    Commandline._CommandRecord := self;
+    RESULT := Commandline;
+    //self._ref := RESULT;
+  end
+  else
+    RESULT := nil;
 end;
 
 initialization
