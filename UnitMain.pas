@@ -36,6 +36,7 @@ type
     CheckBoxLoop: TCheckBox;
     CheckListBoxCommands: TCheckListBox;
     PythonModule1: TPythonModule;
+    PyDelphiWrapper1: TPyDelphiWrapper;
     procedure ButtonActClick(Sender: TObject);
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
       aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
@@ -43,6 +44,12 @@ type
     procedure ButtonRunScriptClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure PythonModule1Events0Execute(Sender: TObject; PSelf,
+      Args: PPyObject; var Result: PPyObject);
+    procedure PythonModule1Events1Execute(Sender: TObject; PSelf,
+      Args: PPyObject; var Result: PPyObject);
+    procedure PythonModule1Events2Execute(Sender: TObject; PSelf,
+      Args: PPyObject; var Result: PPyObject);
+    procedure PythonModule1Events3Execute(Sender: TObject; PSelf,
       Args: PPyObject; var Result: PPyObject);
   private
     { Private declarations }
@@ -63,11 +70,10 @@ uses UnitCommander;
 
 procedure TFormMain.ButtonRunScriptClick(Sender: TObject);
 begin
-  MineCommander.ProcessMagic('hello world of minecraft!');
-  EXIT;
+
   TThread.CreateAnonymousThread(procedure
     begin
-    MineCommander.ProcessMagic('hello world of minecraft!');
+      MineCommander.RunMagic('hello world of minecraft!');
     end
   ).Start();
 
@@ -108,8 +114,7 @@ begin
     procedure (command: String)
     begin
       PythonDelphiVarMessage.Value := command;
-      var script := MineCommander.GenerateMagicScript(command);
-      PythonEngine1.ExecString(script);
+      MineCommander.NoteWill(command);
     end;
 
   MineCommander.RunScriptProc :=
@@ -119,6 +124,8 @@ begin
     end;
   MineCommander.Configure(AsServer);
   MineCommander.LoadCommands(Self.CheckListBoxCommands.Items);
+
+  PythonModule1.Initialize();
 end;
 
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
@@ -134,7 +141,79 @@ end;
 procedure TFormMain.PythonModule1Events0Execute(Sender: TObject; PSelf,
   Args: PPyObject; var Result: PPyObject);
 begin
-         { TODO : implement loop callback }
+
+  var CmdsListStr := MineCommander.ListKeywords();
+  RESULT := PythonEngine1.EvalString(CmdsListStr);
+
+  PythonEngine1.Py_INCREF(Result);
+  //Result:=PythonEngine1.Py_None;
+end;
+
+procedure TFormMain.PythonModule1Events1Execute(Sender: TObject; PSelf,
+  Args: PPyObject; var Result: PPyObject);
+begin
+{ TODO : implement loop callback }
+  var command := MineCommander.PerformWill();
+  if Assigned(command) then
+  begin
+    var PyObj := PyDelphiWrapper1.Wrap(command.GetObject);
+    Result := PyObj;
+    //! PythonEngine1.Py_DECREF(PyObj);
+  end
+  else
+  begin
+    Result := PythonEngine1.Py_None;
+    PythonEngine1.Py_INCREF(Result);
+  end;
+
+end;
+
+procedure TFormMain.PythonModule1Events2Execute(Sender: TObject; PSelf,
+  Args: PPyObject; var Result: PPyObject);
+
+begin
+  var arglines := TStringList.Create();
+  try
+    PythonEngine1.PyTupleToStrings(Args, arglines);
+    if arglines.Count > 0 then
+    begin
+      var keyword := arglines[0];
+      var instantiateScript := MineCommander.InstantiateScript(keyword);
+      if instantiateScript > '' then
+        Result := PythonEngine1.EvalString(instantiateScript)
+      else
+        Result := PythonEngine1.Py_None;
+       PythonEngine1.Py_INCREF(Result);
+    end;
+  finally
+    arglines.Free;
+  end;
+end;
+
+procedure TFormMain.PythonModule1Events3Execute(Sender: TObject; PSelf,
+  Args: PPyObject; var Result: PPyObject);
+begin
+  var arglines := TStringList.Create();
+  try
+    PythonEngine1.PyTupleToStrings(Args, arglines);
+    if arglines.Count > 0 then
+    begin
+      var list := arglines[0];
+      var keywords := list.Split([' ']);
+      CheckListBoxCommands.CheckAll(cbUnchecked);
+      for var keyword in keywords do
+      begin
+        var ix := CheckListBoxCommands.Items.IndexOf(keyword);
+        if ix < 0 then
+          CONTINUE;
+        CheckListBoxCommands.Checked[ix] := True;
+      end;
+    end;
+    Result := PythonEngine1.Py_None;
+    PythonEngine1.Py_INCREF(Result);
+  finally
+    arglines.Free;
+  end;
 end;
 
 end.

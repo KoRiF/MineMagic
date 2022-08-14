@@ -245,6 +245,7 @@ object FormMain: TFormMain
     Top = 8
   end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
+    DelayWrites = True
     UnicodeIO = True
     RawOutput = False
     Output = Memo1
@@ -292,12 +293,30 @@ object FormMain: TFormMain
     Engine = PythonEngine1
     Events = <
       item
-        Name = 'PythonEvent0_mine_loop_callback'
+        Name = 'PythonEvent0_define_commands'
         OnExecute = PythonModule1Events0Execute
+      end
+      item
+        Name = 'PythonEvent1_request_loop_command'
+        OnExecute = PythonModule1Events1Execute
+      end
+      item
+        Name = 'PythonEvent2_request_instance'
+        OnExecute = PythonModule1Events2Execute
+      end
+      item
+        Name = 'PythonEvent3_synchronize_activities'
+        OnExecute = PythonModule1Events3Execute
       end>
-    ModuleName = 'mine_module'
+    ModuleName = 'delphi_module'
     Errors = <>
     Left = 268
     Top = 74
+  end
+  object PyDelphiWrapper1: TPyDelphiWrapper
+    Engine = PythonEngine1
+    Module = PythonModule1
+    Left = 268
+    Top = 146
   end
 end
