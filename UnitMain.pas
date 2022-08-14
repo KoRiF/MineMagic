@@ -37,6 +37,8 @@ type
     CheckListBoxCommands: TCheckListBox;
     PythonModule1: TPythonModule;
     PyDelphiWrapper1: TPyDelphiWrapper;
+    EditMagicTest: TEdit;
+    ButtonTestMagic: TButton;
     procedure ButtonActClick(Sender: TObject);
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
       aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
@@ -51,6 +53,7 @@ type
       Args: PPyObject; var Result: PPyObject);
     procedure PythonModule1Events3Execute(Sender: TObject; PSelf,
       Args: PPyObject; var Result: PPyObject);
+    procedure ButtonTestMagicClick(Sender: TObject);
   private
     { Private declarations }
     const
@@ -77,6 +80,11 @@ begin
     end
   ).Start();
 
+end;
+
+procedure TFormMain.ButtonTestMagicClick(Sender: TObject);
+begin
+  MineCommander.PassCommand('MAGIC', EditMagicTest.Text);
 end;
 
 procedure TFormMain.ButtonActClick(Sender: TObject);
@@ -126,6 +134,8 @@ begin
   MineCommander.LoadCommands(Self.CheckListBoxCommands.Items);
 
   PythonModule1.Initialize();
+  Self.SpinEditLoopCountdown.Value := 10;
+  Self.SpinEditLoopDelay.Value := 60000;
 end;
 
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;

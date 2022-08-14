@@ -231,6 +231,23 @@ object FormMain: TFormMain
         ItemHeight = 15
         TabOrder = 4
       end
+      object EditMagicTest: TEdit
+        Left = 376
+        Top = 384
+        Width = 265
+        Height = 23
+        TabOrder = 5
+        Text = 'MAGIC _'
+      end
+      object ButtonTestMagic: TButton
+        Left = 376
+        Top = 421
+        Width = 75
+        Height = 25
+        Caption = 'Test Magic'
+        TabOrder = 6
+        OnClick = ButtonTestMagicClick
+      end
     end
   end
   object ncServerSource1: TncServerSource
