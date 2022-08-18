@@ -187,7 +187,8 @@ begin
   FWaveRecorder.OnBufferReleased := ArchBuffer;
 
   Buffers := TList.Create();
-  Prepare();
+  if FWaveRecorder.DeviceCount > 0 then
+    Prepare();
 end;
 
 destructor TWinWaveRecorder.Destroy;
