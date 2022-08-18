@@ -269,7 +269,6 @@ begin
   begin
     command := Trim(UpperCase(command.Substring(Length(MAGIC_KEY))));
     var CmdObj := ParseCommand(command, key, args);
-
     if CmdObj <> nil then
     begin
       var Wills := _WillList.LockList();
@@ -449,16 +448,16 @@ end;
 
 function TCommandRec.ParseCommand(cmdline: string): IMineCommandline;
 begin
+  var Commandline := TMineCommandline.Create(cmdline);
   if cmdline.StartsWith(Keyword, True) then
   begin
-    var Commandline := TMineCommandline.Create(cmdline);
     Commandline._parampos := Length(Keyword) + 1;
-    Commandline._CommandRecord := self;
-    RESULT := Commandline;
     //self._ref := RESULT;
   end
   else
-    RESULT := nil;
+    Commandline._parampos := 0;
+  Commandline._CommandRecord := self;
+  RESULT := Commandline;
 end;
 
 initialization
