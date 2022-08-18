@@ -180,10 +180,14 @@ begin
   Self._SendCommandProc := Self.ReceiveCommand; // simulate remote processing
 end;
 
-function TMineCommander.GetLocality: Boolean;
-begin
-  RESULT := Assigned(Recorder.Mic) and Assigned(Self.Recognizer);
-end;
+//function TMineCommander.GetLocality: Boolean;
+//begin
+//{$IFDEF MSWINDOWS}
+//  RESULT := Assigned(Recorder.Mic) and Assigned(Self.Recognizer);
+//{$ELSE}
+//  RESULT := False; //audio recording for Android still not implemented
+//{$ENDIF}
+//end;
 
 procedure TMineCommander.InitKeymapping;
 begin
