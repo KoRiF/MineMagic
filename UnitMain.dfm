@@ -11,7 +11,6 @@ object FormMain: TFormMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
@@ -62,14 +61,8 @@ object FormMain: TFormMain
           Font.Height = -13
           Font.Name = 'Courier New'
           Font.Style = []
+          Font.Quality = fqClearTypeNatural
           TabOrder = 0
-          CodeFolding.GutterShapeSize = 11
-          CodeFolding.CollapsedLineColor = clGrayText
-          CodeFolding.FolderBarLinesColor = clGrayText
-          CodeFolding.IndentGuidesColor = clGray
-          CodeFolding.IndentGuides = True
-          CodeFolding.ShowCollapsedLine = False
-          CodeFolding.ShowHintMark = True
           UseCodeFolding = False
           Gutter.Font.Charset = DEFAULT_CHARSET
           Gutter.Font.Color = clWindowText
@@ -83,7 +76,6 @@ object FormMain: TFormMain
             ''
             'mc.postToChat(mine_message.Value)'
             '')
-          FontSmoothing = fsmNone
         end
         object ButtonRunScript: TButton
           Left = 1
@@ -257,6 +249,11 @@ object FormMain: TFormMain
     Top = 8
   end
   object PythonEngine1: TPythonEngine
+    DllName = 'python37.dll'
+    DllPath = 'c:\Python37\'
+    APIVersion = 1013
+    RegVersion = '3.7'
+    UseLastKnownVersion = False
     IO = PythonGUIInputOutput1
     Left = 272
     Top = 8
