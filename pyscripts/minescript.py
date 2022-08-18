@@ -6,33 +6,26 @@ import random as rnd
 DELAY0_SEC = 5
 LOOP = mine_loop.Value #delphi
 DELAY_LOOP_SEC = mine_loopdelay.Value #delphi
-
-COUNTDOWN0 = mine_countdown.Value #delphi 	
-
+COUNTDOWN0 = mine_countdown.Value #delphi     
 
 from delphi_module import *
 
-keywords = PythonEvent0_define_commands()
-print(keywords)
+handlers = MineHandler.handlers
 
-daemons = dict.fromkeys(keywords) #[MineBridge()]
+default_handler = DefaultHandler()
+handlers['TERMINATE'] = TerminateHandler()
 
-print(daemons)
+#todo move
 
-def add_daemon(nickname, daemon):
-    daemons[nickname] = daemon
+print(f"Message: {mine_message.Value}")
 
-def remove_daemon(nickname):
-    daemons[nickname] = None
+keywords = delphi_define_commands()
+print(f"Supported keywords: {keywords}")
 
-def list_active_daemons():
-    keywords = ''
-    for keyword, daemon in daemons.items():
-        if daemon:
-            keywords += keyword + ' '
-        print(keywords)        
-    return keywords.strip()        
+for keyword in keywords:
+    handlers[keyword] = delphi_request_instance(keyword)
 
+print(f"Registered handlers: {MineHandler.handlers}")
 
 def check_loop_condition():
     if not hasattr(check_loop_condition, "loop_countdown"):
@@ -42,21 +35,32 @@ def check_loop_condition():
     return check_loop_condition.loop_countdown > 0
 
 
-
 while (check_loop_condition()):
-    cmd = PythonEvent1_request_loop_command()
+    cmd = delphi_request_loop_command()
     if (cmd):
-        print(cmd.KeyWord)
-        new_daemon = PythonEvent2_request_instance(cmd.KeyWord)
-        daemons[cmd.KeyWord] = new_daemon
+        print(f"command keyword: {cmd.KeyWord}; parameters: {cmd.Paramsline}")
+        keyword = cmd.KeyWord
+        cmdline = cmd.Paramsline
         
-        activities = list_active_daemons()
+        while keyword in handlers.keys():
+            print(f"current processing: {keyword} in {keywords}")
+            print(f"current handler: {handlers[keyword]}")
+            cmdline = handlers[keyword](cmdline)
+            if (cmdline):
+                keyword = cmdline.split()[0]
+            else:
+                keyword = cmdline            
+        else:
+            default_handler(cmdline)
+            
+        activities = MineDaemon.list_active_daemons()
         print(f"active: {activities}")
-        PythonEvent3_synchronize_activities(activities)
+        delphi_synchronize_activities(activities)
+        
         continue
     
-    print(mine_message.Value)
-    print(daemons)
+    daemons = MineDaemon.daemons
+    print(f"active daemons: {daemons}")
     
     for daemon in daemons.values():
         if daemon:
@@ -64,4 +68,4 @@ while (check_loop_condition()):
     #Delay
     time.sleep(DELAY_LOOP_SEC)
 else:
-    print("Magic is done!")
+    print("Magic is done!")    

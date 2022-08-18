@@ -310,19 +310,19 @@ object FormMain: TFormMain
     Engine = PythonEngine1
     Events = <
       item
-        Name = 'PythonEvent0_define_commands'
+        Name = 'delphi_define_commands'
         OnExecute = PythonModule1Events0Execute
       end
       item
-        Name = 'PythonEvent1_request_loop_command'
+        Name = 'delphi_request_loop_command'
         OnExecute = PythonModule1Events1Execute
       end
       item
-        Name = 'PythonEvent2_request_instance'
+        Name = 'delphi_request_instance'
         OnExecute = PythonModule1Events2Execute
       end
       item
-        Name = 'PythonEvent3_synchronize_activities'
+        Name = 'delphi_synchronize_activities'
         OnExecute = PythonModule1Events3Execute
       end>
     ModuleName = 'delphi_module'
