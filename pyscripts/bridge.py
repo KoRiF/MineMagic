@@ -1,21 +1,25 @@
-class MineBridge(MineDaemon):
+import mcpi.block as block
+class MineBridge(MineDaemon):    
     def __init__(self, mc):
         super().__init__(mc)
-        self.dynamic = mc.dynamic()
+        self.mc = mc.controller()
+        print(self.mc)
+        self.dynamic = mc.dynamic
+        print(self.dynamic)
         self.mc.postToChat("Hi, Minecraft - Auto Bridge Active")
         self.mc.postToChat("www.stuffaboutcode.com")
         self.material = None
-    
-    def build_next_bridge_block(self, material): #=block.DIAMOND_BLOCK
+
+    def build_next_bridge_block(self, material=None): #=block.DIAMOND_BLOCK
         #Has the player moved more than 0.2 in any horizontal (x,z) direction
         if (self.material):
             material = self.material #todo debug&rewrite defaults
         if (self.dynamic.check_movement()):
             #Project players direction forward to the next square
-            nextPlayerPos = self.dynamic.project_until_next_block(playerPos)
-            blockBelowPos, blockBelow = get_block_below_position(nextPlayerPos)
+            nextPlayerPos = self.dynamic.project_until_next_block(self.dynamic.playerPos)
+            blockBelowPos, blockBelow = self.dynamic.get_block_below_position(nextPlayerPos)
             if (blockBelow == block.AIR) or (blockBelow == block.WATER):
-                mc.setBlock(blockBelowPos.x, blockBelowPos.y, blockBelowPos.z, material)
+                self.mc.setBlock(blockBelowPos.x, blockBelowPos.y, blockBelowPos.z, material)
     def parse_material(material_name):
         materials = {}#block_materials
         if material_name in materials.keys():
@@ -24,9 +28,11 @@ class MineBridge(MineDaemon):
             return None
     def step(self):
         if (self.dynamic):
-            #self.dynamic.update()
-            #self.build_next_bridge_block()
-            #self.dynamic.store()
+            import mcpi.block as block
+            print(self.dynamic)
+            self.dynamic.update()
+            self.build_next_bridge_block(block.DIAMOND_BLOCK)
+            self.dynamic.store()
             pass
         else:
             print("Do Bridge Step!")
@@ -37,7 +43,7 @@ class BridgeHandler(DaemonHandler):
         pass
     def create_daemon(self, params):
         print(f"Create daemon with params: {params}")
-        bridge_daemon = MineBridge(MineController())
+        bridge_daemon = MineBridge(MinecraftController())
         self.update_daemon(bridge_daemon, params)
         return bridge_daemon
     def update_daemon(self, daemon, params):

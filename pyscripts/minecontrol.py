@@ -10,7 +10,7 @@ class MineController():
     def postToChat(self, message):
         print(message)
         
-"""    
+    
 class MinecraftController(MineController):
     #import the minecraft.py module from the minecraft directory
     import mcpi.minecraft as minecraft
@@ -24,4 +24,4 @@ class MinecraftController(MineController):
         return cls.mc    
     
 #class StubController(MineController):
-"""    
+    
