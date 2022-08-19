@@ -62,6 +62,7 @@ type
   private
     FLocality: Boolean;
     procedure SetLocality(const Value: Boolean);
+    function GetLocality(): Boolean;
   protected
     constructor Create();
     destructor Destroy();virtual;
