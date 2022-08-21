@@ -301,7 +301,7 @@ end;
 function TMineCommander.ParseCommand(command: String; out key: String; out args: String): IMineCommandline;
 begin
   var argsbuilder := TStringBuilder.Create('');
-  var ss := command.Split([' ']);
+  var ss := command.Split([' ', '.']);
   for var s in ss do
   begin
     if _MagicCommands.ContainsKey(s) then

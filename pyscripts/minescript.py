@@ -40,7 +40,7 @@ while (check_loop_condition()):
     if (cmd):
         print(f"command keyword: {cmd.KeyWord}; parameters: {cmd.Paramsline}")
         keyword = cmd.KeyWord
-        cmdline = cmd.Paramsline
+        cmdline = cmd.Paramsline.rstrip('.')
         
         while keyword in handlers.keys():
             print(f"current processing: {keyword} in {keywords}")
