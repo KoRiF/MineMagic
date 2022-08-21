@@ -10,12 +10,12 @@ class MineController():
     def postToChat(self, message):
         print(message)
         
-    
+from minedynamic import *
 class MinecraftController(MineController):
     #import the minecraft.py module from the minecraft directory
     import mcpi.minecraft as minecraft
     #import minecraft block module
-    import mcpi.block as block
+    import mcpi.block as block    
     #import time, so delays can be used
     mc = minecraft.Minecraft.create()
     dynamic = MineDynamic(mc)

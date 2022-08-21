@@ -60,7 +60,7 @@ while (check_loop_condition()):
         continue
     
     daemons = MineDaemon.daemons
-    print(f"active daemons: {daemons}")
+    #print(f"active daemons: {daemons}")
     
     for daemon in daemons.values():
         if daemon:
