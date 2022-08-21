@@ -134,8 +134,8 @@ begin
   MineCommander.LoadCommands(Self.CheckListBoxCommands.Items);
 
   PythonModule1.Initialize();
-  Self.SpinEditLoopCountdown.Value := 10;
-  Self.SpinEditLoopDelay.Value := 60000;
+  Self.SpinEditLoopCountdown.Value := 3000;
+  Self.SpinEditLoopDelay.Value := 200;
 end;
 
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;

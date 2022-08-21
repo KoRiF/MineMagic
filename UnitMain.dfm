@@ -198,7 +198,7 @@ object FormMain: TFormMain
         Top = 96
         Width = 105
         Height = 24
-        MaxValue = 1000
+        MaxValue = 100000
         MinValue = 0
         TabOrder = 1
         Value = 1000
