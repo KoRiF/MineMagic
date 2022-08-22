@@ -44,12 +44,7 @@ begin
   if AudioStream <> nil then
     if AudioStream is TStringStream then begin
       var SS := TStringStream(AudioStream);
-      //var len := SS.DataString.Length;
-      //var par := RESTRequest.Params.AddHeader('Content-Length', IntToStr(len));
-      RESTRequest.AddBody(AudioStream, 'audio/wave');//RESTRequest.Body.JSONWriter.WriteRaw(SS.DataString);
-
-
-
+      RESTRequest.AddBody(AudioStream,ctAUDIO_VND_WAVE);
     end
     else begin
     var SS := TStringStream.Create('');
