@@ -2,16 +2,27 @@ unit UnitSpeechRecognizer;
 
 interface
 
-uses Azure.API3.Speech.SpeechToText;
+uses Azure.API3.Speech.SpeechToText, UnitHuggingFaceSpeechToText;
 
 type
+  TRecognizerKind = (asrHuggingFace, asrAzure);
 
   TSpeechRecognizer = Class
     function RecognizeVoice(filename: string): string; virtual; abstract;
     function InitRecognizer(): Boolean; virtual; abstract;
-    class function ObtainRecognizer(): TSpeechRecognizer;
+    class function ObtainRecognizer(kind: TRecognizerKind = asrAzure): TSpeechRecognizer;
   private
     class var _Recognizer: TSpeechRecognizer;
+  End;
+
+  THuggingFaceRecognizer = Class(TSpeechRecognizer)
+    function RecognizeVoice(filename: string): string; override;
+    function InitRecognizer(): Boolean; override;
+  private
+    _HuggingFaceToken: String;
+    procedure InitHuggingFaceToken();
+  private
+    HuggingFaceS2T: THuggingFaceSpeechToText;
   End;
 
   TAzureSpeechRecognizer = Class(TSpeechRecognizer)
@@ -69,18 +80,56 @@ end;
 
 { TSpeechRecognizer }
 
-class function TSpeechRecognizer.ObtainRecognizer: TSpeechRecognizer;
+class function TSpeechRecognizer.ObtainRecognizer(kind: TRecognizerKind = asrAzure): TSpeechRecognizer;
 var Recognizer: TSpeechRecognizer;
 begin
   if _Recognizer <> nil then
     EXIT(Recognizer);
+  case kind of
+    asrHuggingFace: Recognizer := THuggingFaceRecognizer.Create();
+    asrAzure: Recognizer := TAzureSpeechRecognizer.Create();
+  end;
 
-  Recognizer := TAzureSpeechRecognizer.Create();
   if Recognizer.InitRecognizer() then
     _Recognizer := Recognizer
   else
     FreeAndNil(Recognizer);
   RESULT := _Recognizer;
+end;
+
+{ THuggingFaceRecognizer }
+
+procedure THuggingFaceRecognizer.InitHuggingFaceToken;
+var ini: TIniFile;
+begin
+  var path := IncludeTrailingPathDelimiter(GetCurrentDir());
+  var iniFilename := path + filenameini;
+  ini := TIniFile.Create(iniFilename);
+  try
+    _HuggingFaceToken := ini.ReadString('HuggingFace', 'Token', '');
+  finally
+    ini.Free();
+  end;
+
+end;
+
+function THuggingFaceRecognizer.InitRecognizer: Boolean;
+begin
+  InitHuggingFaceToken();
+
+  if _HuggingFaceToken <> '' then
+  begin
+    HuggingFaceS2T := THuggingFaceSpeechToText.Create;
+    HuggingFaceS2T.Token := _HuggingFaceToken;
+  end;
+  RESULT := Self._HuggingFaceToken <> '';
+end;
+
+function THuggingFaceRecognizer.RecognizeVoice(filename: string): string;
+begin
+  var recognized := HuggingFaceS2T.SpeechToText(filename);
+  { TODO : Check for recognition success }
+  RESULT := recognized[0].text;
 end;
 
 initialization
