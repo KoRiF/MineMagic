@@ -176,7 +176,13 @@ begin
         PassCommand('MAGIC', voice);
     end
   );
-
+  TgBot.ProcessTextMessage :=  (
+    procedure (text: String; Reply: TProc<string>)
+    begin
+      Reply('Accepted: ' + text);
+        PassCommand('MAGIC', text);
+    end
+  );
 
   _MagicCommands := TDictionary<String, TCommandRec>.Create();
   _WillList := TThreadList.Create();

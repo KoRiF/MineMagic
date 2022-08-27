@@ -18,10 +18,12 @@ type
   private
     _OnAnyMessage: TProc;
     _ProcessVoiceFile: TProc<string, TProc<string>>;
+    _ProcessTextMessage: TProc<string, TProc<string>>;
     function getBotUri(): string;
   public
     property BotUri: string read getBotUri;
     property ProcessVoiceFile: TProc<string, TProc<string>> write _ProcessVoiceFile;
+    property ProcessTextMessage: TProc<string, TProc<string>> write _ProcessTextMessage;
     procedure Run();
     procedure Terminate();
     procedure ReplyMessage(ChatId: Integer; text: string);
@@ -33,6 +35,7 @@ type
   private
     function DownloadMessageFile(fileId: string): string;
     procedure ProcessMessageVoice(TgMsg: TftMessage);
+    procedure ProcessMessageText(TgMsg: TftMessage);
 
 
   private
@@ -93,6 +96,8 @@ begin
         if (Pos('/start', msg.text) > 0) or
           (Pos('/layout', msg.text) > 0) then
           Exit;
+        Bot.ProcessMessageText(msg);
+
         Bot.ProcessMessageVoice(msg)
       end
       );
@@ -102,6 +107,21 @@ end;
 function TTelegramBot.isActive: Boolean;
 begin
   RESULT := Assigned(_Thread);
+end;
+
+procedure TTelegramBot.ProcessMessageText(TgMsg: TftMessage);
+var Reply: TProc<string>;
+begin
+  if TgMsg.Text = '' then
+    Exit;
+  Reply := (
+    procedure (text: string)
+    begin
+      Self.ReplyMessage(TgMsg.Chat.Id, text)
+    end
+    );
+
+  Self._ProcessTextMessage(TgMsg.Text, Reply);
 end;
 
 procedure TTelegramBot.ProcessMessageVoice(TgMsg: TftMessage);
