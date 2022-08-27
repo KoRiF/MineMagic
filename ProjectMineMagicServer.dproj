@@ -138,6 +138,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         </DCCReference>
         <DCCReference Include="UnitCommander.pas"/>
         <DCCReference Include="UnitMineScripter.pas"/>
+        <DCCReference Include="UnitTelegrammer.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -166,6 +167,12 @@ $(PreBuildEvent)]]></PreBuildEvent>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="Win64\Debug\ProjectMineMagicServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>ProjectMineMagicServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\ProjectMineMagicServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProjectMineMagicServer.exe</RemoteName>
@@ -175,12 +182,6 @@ $(PreBuildEvent)]]></PreBuildEvent>
                 <DeployFile LocalName="Win64\Debug\ProjectMineMagicServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>ProjectMineMagicServer.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win64\Debug\ProjectMineMagicServer.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>ProjectMineMagicServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

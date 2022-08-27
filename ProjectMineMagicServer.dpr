@@ -4,7 +4,8 @@ uses
   Vcl.Forms,
   UnitMain in 'UnitMain.pas' {FormMain},
   UnitCommander in 'UnitCommander.pas',
-  UnitMineScripter in 'UnitMineScripter.pas';
+  UnitMineScripter in 'UnitMineScripter.pas',
+  UnitTelegrammer in 'UnitTelegrammer.pas';
 
 {$R *.res}
 
