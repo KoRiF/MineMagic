@@ -210,7 +210,7 @@ begin
     begin
       var list := arglines[0];
       var keywords := list.Split([' ']);
-      CheckListBoxCommands.CheckAll(cbUnchecked);
+      CheckListBoxCommands.CheckAll(TCheckBoxState.cbUnchecked);
       for var keyword in keywords do
       begin
         var ix := CheckListBoxCommands.Items.IndexOf(keyword);
