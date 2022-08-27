@@ -49,6 +49,11 @@ type
     /// and TftWebhookTcpServer objects.
     /// </summary>
     property EventHandler: TftEventHandler read GetEventHandler;
+  protected
+    /// <summary>
+    /// Http client for accessing api.
+    /// </summary>
+    property HttpClient: TftHTTPClient read FHttpClient;
   end;
 
 implementation
