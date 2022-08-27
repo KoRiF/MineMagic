@@ -90,7 +90,7 @@ end;
 
 function TftBot.GetToken: String;
 begin
-  Result := Token;
+  Result := FToken;
 end;
 
 end.
