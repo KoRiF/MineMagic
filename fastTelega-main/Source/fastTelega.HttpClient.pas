@@ -45,7 +45,7 @@ constructor TftHttpClient.Create;
 begin
   FHttpClient := TNetHTTPClient.Create(nil);
   FHttpClient.ConnectionTimeout := 5000;
-  FHttpClient.ResponseTimeout := 5000;
+  FHttpClient.ResponseTimeout := 0;
 end;
 
 destructor TftHttpClient.Destroy;
