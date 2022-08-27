@@ -2,7 +2,7 @@ unit UnitCommander;
 
 interface
 
-uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitMineScripter,
+uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitMineScripter, UnitTelegrammer,
   System.Generics.Collections, System.SysUtils, System.Classes;
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
@@ -49,6 +49,7 @@ type
     Recorder: TVoiceRecorder;
     Recognizer: TSpeechRecognizer;
     Scripter: TMineScripter;
+    TgBot: TTelegramBot;
   private
     const MAGIC_KEY = 'MAGIC';
     RPC_MAGIC = 0;
@@ -106,7 +107,11 @@ type
 
   private
     procedure ConfigureAsServer;
-
+  private
+    function getTgBotActive(): Boolean;
+    procedure setTgBotActive(Active: Boolean);
+  public
+    property TgBotActive: Boolean read getTgBotActive write setTgBotActive;
   End;
 
 var MineCommander: TMineCommander;
@@ -161,6 +166,18 @@ begin
   UnitSpeechRecognizer.filenameini := 'minecommander.ini';
   Recognizer := TSpeechRecognizer.ObtainRecognizer(asrHuggingFace);
 
+  UnitTelegrammer.filenameini := 'minecommander.ini';
+  TgBot := TTelegramBot.InstantinateBot();
+  TgBot.ProcessVoiceFile := (
+    procedure (voiceFileName: String; Reply: TProc<string>)
+    begin
+      var voice := RecognizeMineVoice(voiceFileName);
+      Reply('Accepted: ' + voice);
+        PassCommand('MAGIC', voice);
+    end
+  );
+
+
   _MagicCommands := TDictionary<String, TCommandRec>.Create();
   _WillList := TThreadList.Create();
   InitKeymapping();
@@ -210,6 +227,11 @@ begin
     RESULT := _MagicCommands[keyword].InstatinationScript
   else
     RESULT := '';
+end;
+
+function TMineCommander.getTgBotActive: Boolean;
+begin
+  RESULT := Self.TgBot.Active;
 end;
 
 function TMineCommander.ListKeywords(Prefix: Char; delimiter: String; Postfix: Char): String;
@@ -407,6 +429,17 @@ procedure TMineCommander.SetLocality(const Value: Boolean);
 begin
   FLocality := Value;
 end;
+
+
+procedure TMineCommander.setTgBotActive(Active: Boolean);
+begin
+  if Active <> Self.TgBot.Active then
+    if Active then
+      Self.TgBot.Run()
+    else
+      Self.TgBot.Terminate();
+end;
+
 
 
 { TMineCommandline }
