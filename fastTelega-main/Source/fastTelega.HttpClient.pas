@@ -3,13 +3,11 @@
 /// Alexander Syrykh
 /// </summary>
 unit fastTelega.HttpClient;
-
 interface
-
-uses System.SysUtils, System.Classes, System.Net.URLClient,
+uses System.SysUtils, System.IOUtils, System.Classes,
+  System.Net.URLClient,
   System.Net.HttpClientComponent,
   System.Net.Mime;
-
 type
   /// <summary>
   /// This class makes http requests.
@@ -36,24 +34,19 @@ type
       const MethodType: String): string;
     property ContentType: String read GetContentType write SetContentType;
   end;
-
 implementation
-
 { TftHttpClient }
-
 constructor TftHttpClient.Create;
 begin
   FHttpClient := TNetHTTPClient.Create(nil);
   FHttpClient.ConnectionTimeout := 5000;
   FHttpClient.ResponseTimeout := 0;
 end;
-
 destructor TftHttpClient.Destroy;
 begin
   FreeAndNil(FHttpClient);
   inherited;
 end;
-
 function TftHttpClient.makeRequest(const AUrl: String; args: TObject;
   const MethodType: String): string;
 var
@@ -77,19 +70,29 @@ begin
   else
     Result := POST_Method(AUrl, TStrings(args));
 end;
-
 function TftHttpClient.GetContentType: String;
 begin
   Result := FHttpClient.ContentType;
 end;
-
 function TftHttpClient.GET_Method(AUrl: String; const AResponseContent: TStream;
   const AHeaders: TNetHeaders): String;
 begin
   Result := '';
   try
-    Result := FHttpClient.Get(AUrl, AResponseContent, AHeaders)
-      .ContentAsString(TEncoding.UTF8);
+    var Response := FHttpClient.Get(AUrl, AResponseContent, AHeaders);
+    if AnsiCompareText(ContentType, 'multipart/form-data') = 0 then
+    begin
+      var tempfilename := TPath.GetTempFileName();
+      var FileStream := TFileStream.Create(tempfilename, fmCreate or fmShareDenyWrite);
+      try
+        FileStream.CopyFrom(Response.ContentStream);
+        Result := FileStream.FileName;
+      finally
+        FileStream.Free;
+      end;
+    end
+    else
+      Result := Response.ContentAsString(TEncoding.UTF8);
   except
     on E: Exception do
     begin
@@ -98,7 +101,6 @@ begin
     end;
   end;
 end;
-
 function TftHttpClient.POST_Method(AUrl: String; AData: TStrings): String;
 begin
   Result := '';
@@ -112,7 +114,6 @@ begin
     end;
   end;
 end;
-
 function TftHttpClient.POST_Method(AUrl: String;
   AData: TMultipartFormData): String;
 begin
@@ -127,10 +128,8 @@ begin
     end;
   end;
 end;
-
 procedure TftHttpClient.SetContentType(const Value: String);
 begin
   FHttpClient.ContentType := Value;
 end;
-
 end.
