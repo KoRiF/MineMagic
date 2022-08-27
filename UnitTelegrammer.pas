@@ -3,7 +3,7 @@ unit UnitTelegrammer;
 interface
 
 uses
-  System.SysUtils,
+  System.SysUtils, Classes,
   fastTelega.AvailableTypes,
   fastTelega.Bot,
   fastTelega.EventBroadcaster,
@@ -23,7 +23,13 @@ type
     property BotUri: string read getBotUri;
     property ProcessVoiceFile: TProc<string, TProc<string>> write _ProcessVoiceFile;
     procedure Run();
+    procedure Terminate();
     procedure ReplyMessage(ChatId: Integer; text: string);
+  private
+    _Thread: TThread;
+    function isActive(): Boolean;
+  public
+    property Active: Boolean read IsActive;
   private
     function DownloadMessageFile(fileId: string): string;
     procedure ProcessMessageVoice(TgMsg: TftMessage);
@@ -41,7 +47,7 @@ var
   filenameini: string = 'tgbot.ini';
 implementation
 
-uses IniFiles, Classes, JSON;
+uses IniFiles, JSON;
 
 { TTelegramBot }
 
@@ -93,6 +99,11 @@ begin
   RESULT := Bot;
 end;
 
+function TTelegramBot.isActive: Boolean;
+begin
+  RESULT := Assigned(_Thread);
+end;
+
 procedure TTelegramBot.ProcessMessageVoice(TgMsg: TftMessage);
 var Reply: TProc<string>;
 begin
@@ -133,17 +144,31 @@ end;
 
 procedure TTelegramBot.Run;
 begin
-  TThread.CreateAnonymousThread(
+  _Thread := TThread.CreateAnonymousThread(
     procedure()
     begin
+      var Thread := _Thread;
       Self.API.deleteWebhook();
       var LongPoll := TftLongPoll.Create(Self);
-      while (True) do
-      begin
+      repeat
         LongPoll.start();
-      end
+        Sleep(1000);
+      until Thread.CheckTerminated();
     end
-  ).Start();
+  );
+
+  _Thread.Start();
+end;
+
+
+
+procedure TTelegramBot.Terminate;
+begin
+  if Assigned(_Thread) then
+  begin
+    _Thread.Terminate();
+    _Thread := nil;
+  end;
 end;
 
 end.
