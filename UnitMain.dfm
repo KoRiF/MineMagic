@@ -33,6 +33,15 @@ object FormMain: TFormMain
         TabOrder = 0
         OnClick = ButtonActClick
       end
+      object ButtonTgBot: TButton
+        Left = 3
+        Top = 80
+        Width = 126
+        Height = 25
+        Caption = 'Start Telegram Bot'
+        TabOrder = 1
+        OnClick = ButtonTgBotClick
+      end
     end
     object TabSheetScripting: TTabSheet
       Caption = 'Mine Scripting'

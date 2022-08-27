@@ -39,6 +39,7 @@ type
     PyDelphiWrapper1: TPyDelphiWrapper;
     EditMagicTest: TEdit;
     ButtonTestMagic: TButton;
+    ButtonTgBot: TButton;
     procedure ButtonActClick(Sender: TObject);
     function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
       aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
@@ -54,6 +55,7 @@ type
     procedure PythonModule1Events3Execute(Sender: TObject; PSelf,
       Args: PPyObject; var Result: PPyObject);
     procedure ButtonTestMagicClick(Sender: TObject);
+    procedure ButtonTgBotClick(Sender: TObject);
   private
     { Private declarations }
     const
@@ -85,6 +87,18 @@ end;
 procedure TFormMain.ButtonTestMagicClick(Sender: TObject);
 begin
   MineCommander.PassCommand('MAGIC', EditMagicTest.Text);
+end;
+
+procedure TFormMain.ButtonTgBotClick(Sender: TObject);
+var caption: string;
+begin
+  MineCommander.TgBotActive := not MineCommander.TgBotActive;
+  if MineCommander.TgBotActive then
+    caption := 'Stop Telegram Bot'
+  else
+    caption := 'Start Telegram Bot';
+
+  Self.ButtonTgBot.Caption := caption;
 end;
 
 procedure TFormMain.ButtonActClick(Sender: TObject);
