@@ -159,7 +159,7 @@ begin
   Recorder := TVoiceRecorder.CreateInstance();
 
   UnitSpeechRecognizer.filenameini := 'minecommander.ini';
-  Recognizer := TSpeechRecognizer.ObtainRecognizer();
+  Recognizer := TSpeechRecognizer.ObtainRecognizer(asrHuggingFace);
 
   _MagicCommands := TDictionary<String, TCommandRec>.Create();
   _WillList := TThreadList.Create();
