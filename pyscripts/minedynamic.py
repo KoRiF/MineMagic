@@ -16,10 +16,13 @@ class MineDynamic():
         self.playerPos = self.lastPlayerPos
         
     def update(self):
-        self.playerPos = self.mc.player.getPos()
-        self.movementX = self.lastPlayerPos.x - self.playerPos.x
-        self.movementZ = self.lastPlayerPos.z - self.playerPos.z
-        self.movementY = self.lastPlayerPos.y - self.playerPos.y
+        try:
+            self.playerPos = self.mc.player.getPos()
+            self.movementX = self.lastPlayerPos.x - self.playerPos.x
+            self.movementZ = self.lastPlayerPos.z - self.playerPos.z
+            self.movementY = self.lastPlayerPos.y - self.playerPos.y
+        except  Exception as ex:
+            print(ex)
     
     def store(self):
         self.lastPlayerPos = self.playerPos
@@ -53,4 +56,11 @@ class MineDynamic():
         if blockBelowPos.z < 0: blockBelowPos.z = blockBelowPos.z - 1
         if blockBelowPos.x < 0: blockBelowPos.x = blockBelowPos.x - 1
         blockBelowPos.y = blockBelowPos.y - deep
-        return blockBelowPos, self.mc.getBlock(blockBelowPos)
+        blockBelow = None
+        try:
+            blockBelow = self.mc.getBlock(blockBelowPos)
+        except Exception as ex: 
+            #self.mc.postToChat()
+            print(blockBelowPos)
+            print(ex)
+        return blockBelowPos, blockBelow
