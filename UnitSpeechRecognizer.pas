@@ -33,14 +33,41 @@ type
     _AzureKey: string;
     AzureS2T: TAzureSpeechToText;
     procedure InitAzureKey();
+    procedure CheckAudioFormat(var filename: string);
   End;
 var filenameini: string;
 
 implementation
 
-uses Azure.API3.Connection, IniFiles, System.SysUtils;
+uses Azure.API3.Connection, IniFiles, System.SysUtils
+{$IFDEF MSWINDOWS}
+, WinApi.ShellAPI, WinApi.Windows
+{$ENDIF}
+;
 
 { TAzureSpeechRecognizer }
+
+procedure TAzureSpeechRecognizer.CheckAudioFormat(var filename: string);
+const FORMAT_CMD_FILEARGS = '-i "%s" "%s"';
+var filemappingArg: string;
+begin
+{$IFDEF MSWINDOWS}
+  var ext := ExtractFileExt(filename);
+  if ext <> '.wav' then
+  begin
+    var filenamewav := ChangeFileExt(filename, '.wav');
+    filemappingArg := Format(FORMAT_CMD_FILEARGS, [filename, filenamewav]);
+    var res := ShellExecute(0, nil, 'ffmpeg.exe', PChar(filemappingArg), nil, SW_HIDE);
+    Sleep(500);
+    if res > $20 then
+    begin
+      filename := filenamewav;
+    end;
+
+  end;
+  //var filenamewav :=
+{$ENDIF}
+end;
 
 procedure TAzureSpeechRecognizer.InitAzureKey;
 var ini: TIniFile;
@@ -74,6 +101,7 @@ end;
 
 function TAzureSpeechRecognizer.RecognizeVoice(filename: string): string;
 begin
+  CheckAudioFormat(filename);
   var  recognized := AzureS2T.SpeechToText(filename);
   RESULT := recognized[0].DisplayText;
 end;
