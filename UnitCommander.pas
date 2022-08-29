@@ -164,7 +164,7 @@ begin
   Recorder := TVoiceRecorder.CreateInstance();
 
   UnitSpeechRecognizer.filenameini := 'minecommander.ini';
-  Recognizer := TSpeechRecognizer.ObtainRecognizer(asrHuggingFace);
+  Recognizer := TSpeechRecognizer.ObtainRecognizer(asrAzure);
 
   UnitTelegrammer.filenameini := 'minecommander.ini';
   TgBot := TTelegramBot.InstantinateBot();

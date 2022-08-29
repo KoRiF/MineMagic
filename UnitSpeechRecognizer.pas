@@ -65,7 +65,6 @@ begin
     end;
 
   end;
-  //var filenamewav :=
 {$ENDIF}
 end;
 
@@ -113,7 +112,7 @@ var Recognizer: TSpeechRecognizer;
 begin
   if _Recognizer <> nil then
     EXIT(Recognizer);
-  case kind of
+  case kind of     { TODO : implement auto-select recognizer type }
     asrHuggingFace: Recognizer := THuggingFaceRecognizer.Create();
     asrAzure: Recognizer := TAzureSpeechRecognizer.Create();
   end;
