@@ -48,7 +48,7 @@ uses Azure.API3.Connection, IniFiles, System.SysUtils
 { TAzureSpeechRecognizer }
 
 procedure TAzureSpeechRecognizer.CheckAudioFormat(var filename: string);
-const FORMAT_CMD_FILEARGS = '-i "%s" "%s"';
+const FORMAT_CMD_FILEARGS = '-i "%s" -ar 16000 -ac 1 -ab 256 -f wav "%s"';
 var filemappingArg: string;
 begin
 {$IFDEF MSWINDOWS}
