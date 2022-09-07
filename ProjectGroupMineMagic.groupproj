@@ -1,9 +1,12 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{8A880AB2-7DFD-4C6A-945D-C353D559076D}</ProjectGuid>
+        <ProjectGuid>{0497C9B1-1307-46FA-B5AE-F8F7611E7C6A}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="ProjectMineMagic.dproj">
+        <Projects Include="ProjectMineMagicClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ProjectMineMagicServer.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -14,23 +17,32 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="ProjectMineMagic">
-        <MSBuild Projects="ProjectMineMagic.dproj"/>
+    <Target Name="ProjectMineMagicClient">
+        <MSBuild Projects="ProjectMineMagicClient.dproj"/>
     </Target>
-    <Target Name="ProjectMineMagic:Clean">
-        <MSBuild Projects="ProjectMineMagic.dproj" Targets="Clean"/>
+    <Target Name="ProjectMineMagicClient:Clean">
+        <MSBuild Projects="ProjectMineMagicClient.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="ProjectMineMagic:Make">
-        <MSBuild Projects="ProjectMineMagic.dproj" Targets="Make"/>
+    <Target Name="ProjectMineMagicClient:Make">
+        <MSBuild Projects="ProjectMineMagicClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProjectMineMagicServer">
+        <MSBuild Projects="ProjectMineMagicServer.dproj"/>
+    </Target>
+    <Target Name="ProjectMineMagicServer:Clean">
+        <MSBuild Projects="ProjectMineMagicServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProjectMineMagicServer:Make">
+        <MSBuild Projects="ProjectMineMagicServer.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="ProjectMineMagic"/>
+        <CallTarget Targets="ProjectMineMagicClient;ProjectMineMagicServer"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ProjectMineMagic:Clean"/>
+        <CallTarget Targets="ProjectMineMagicClient:Clean;ProjectMineMagicServer:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ProjectMineMagic:Make"/>
+        <CallTarget Targets="ProjectMineMagicClient:Make;ProjectMineMagicServer:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
