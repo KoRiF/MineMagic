@@ -266,6 +266,7 @@ object FormMain: TFormMain
     Top = 8
   end
   object PythonEngine1: TPythonEngine
+    AutoLoad = False
     IO = PythonGUIInputOutput1
     Left = 272
     Top = 8

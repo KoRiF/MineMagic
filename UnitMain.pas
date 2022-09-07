@@ -61,6 +61,7 @@ type
     const
       TABIX_SERVER = 0;
       TABIX_SCRIPT = 1;
+      procedure InitPython(fileini: string);
   public
     { Public declarations }
   end;
@@ -70,7 +71,7 @@ var
 
 implementation
 
-uses UnitCommander;
+uses UnitCommander, IniFiles;
 {$R *.dfm}
 
 procedure TFormMain.ButtonRunScriptClick(Sender: TObject);
@@ -118,6 +119,8 @@ procedure TFormMain.FormCreate(Sender: TObject);
 const
   SCRIPTFILE_PY = 'minescript.py';
 begin
+  Self.InitPython('minecommander.ini');
+
   if FileExists(SCRIPTFILE_PY) then
     SynEdit1.Lines.LoadFromFile(SCRIPTFILE_PY);
 
@@ -150,6 +153,41 @@ begin
   PythonModule1.Initialize();
   Self.SpinEditLoopCountdown.Value := 3000;
   Self.SpinEditLoopDelay.Value := 200;
+end;
+
+procedure TFormMain.InitPython(fileini: string);
+const PYSECTION = 'Python';
+var IniFile: TIniFile;
+  dllName, dllPath, pythonHome, regVersion: string;
+begin
+  var path := IncludeTrailingPathDelimiter(GetCurrentDir());
+  var iniFilename := path + fileini;
+  IniFile := TIniFile.Create(iniFilename);
+  try
+
+    dllName := IniFile.ReadString(PYSECTION, 'DllName', '');
+    if dllName > '' then
+      Self.PythonEngine1.DllName := dllName;
+
+    dllPath := IniFile.ReadString(PYSECTION, 'DllPath', '');
+    if dllPath > '' then
+      Self.PythonEngine1.DllPath := dllPath;
+
+    pythonHome := IniFile.ReadString(PYSECTION, 'Home', dllPath);
+    if pythonHome > '' then
+      Self.PythonEngine1.SetPythonHome(pythonHome);
+
+    regVersion := IniFile.ReadString(PYSECTION, 'RegVersion', '');
+    if regVersion > '' then
+    begin
+      Self.PythonEngine1.UseLastKnownVersion := False;
+      Self.PythonEngine1.RegVersion := regVersion;
+    end;
+
+    Self.PythonEngine1.LoadDll();
+  finally
+    IniFile.Free();
+  end;
 end;
 
 function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
