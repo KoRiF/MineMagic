@@ -13,15 +13,19 @@ object MineModule: TMineModule
     Events = <
       item
         Name = 'delphi_define_commands'
+        OnExecute = PythonModule1Events0Execute
       end
       item
         Name = 'delphi_request_loop_command'
+        OnExecute = PythonModule1Events1Execute
       end
       item
         Name = 'delphi_request_instance'
+        OnExecute = PythonModule1Events2Execute
       end
       item
         Name = 'delphi_synchronize_activities'
+        OnExecute = PythonModule1Events3Execute
       end>
     ModuleName = 'delphi_module'
     Errors = <>

@@ -140,6 +140,20 @@ begin
 
     end;
 
+  MineModule.UpdateCommandItemsListCallbackProc :=
+    procedure (cmdlist: string)
+    begin
+      var keywords := cmdlist.Split([' ']);
+      CheckListBoxCommands.CheckAll(TCheckBoxState.cbUnchecked);
+      for var keyword in keywords do
+      begin
+        var ix := CheckListBoxCommands.Items.IndexOf(keyword);
+        if ix < 0 then
+          CONTINUE;
+        CheckListBoxCommands.Checked[ix] := True;
+      end;
+    end;
+
 //  MineCommander.ProcessMagic :=
 //    procedure (command: String)
 //    begin
