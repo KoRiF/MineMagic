@@ -2,7 +2,7 @@ unit UnitCommander;
 
 interface
 
-uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitMineScripter, UnitTelegrammer,
+uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitTelegrammer,
   System.Generics.Collections, System.SysUtils, System.Classes;
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
@@ -48,7 +48,6 @@ type
   TMineCommander = Class
     Recorder: TVoiceRecorder;
     Recognizer: TSpeechRecognizer;
-    Scripter: TMineScripter;
     TgBot: TTelegramBot;
   private
     const MAGIC_KEY = 'MAGIC';
@@ -79,7 +78,6 @@ type
     function RecognizeMineCommand(sentence: String): String;
   private
     _WillList: TThreadList;
-    _RunScriptProc: TProc<String>;
     _RunMagic: TProc<String>;
     _ProcessMagic: TProc<String>;
     _SendCommandProc: TProc<Integer, TArray<System.Byte>>;
@@ -91,7 +89,6 @@ type
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
     property ProcessMagic: TProc<String> read _ProcessMagic write _ProcessMagic;
     property RunMagic: TProc<String> read _RunMagic write _RunMagic;
-    property RunScriptProc: TProc<String> write _RunScriptProc;
 
     procedure LoadCommands(Commands: TStrings);
     function ListKeywords(Prefix: Char = '['; delimiter: String = ', '; Postfix: Char = ']'): String;
@@ -101,11 +98,12 @@ type
     function InstantiateScript(keyword: String): String;
   protected
     procedure EstablishLocalProcessingLoop();
-    procedure InitScripting();
+  private
+    var _InitScriptingProc: TProc;
   public
     type TRole =  (AsServer, AsClient);
     procedure Configure(role: TRole);
-
+    property InitScriptingProc: TProc write _InitScriptingProc;
   private
     procedure ConfigureAsServer;
   private
@@ -157,7 +155,8 @@ end;
 procedure TMineCommander.ConfigureAsServer;
 begin
   EstablishLocalProcessingLoop();
-  InitScripting;
+  if Assigned(_InitScriptingProc) then
+    _InitScriptingProc();
 end;
 
 constructor TMineCommander.Create;
@@ -213,14 +212,6 @@ procedure TMineCommander.InitKeymapping;
 begin
   COMMANDKEYMAP := TDictionary<String, Integer>.Create();
   COMMANDKEYMAP.Add(MAGIC_KEY, RPC_MAGIC);
-end;
-
-procedure TMineCommander.InitScripting;
-begin
-  UnitMineScripter.filenameini := 'minecommander.ini';
-  Self.Scripter := TMineScripter.ObtainScripter(_RunScriptProc);
-
-  Self.Scripter.InitScripts();
 end;
 
 function TMineCommander.InstantiateScript(keyword: String): String;

@@ -54,7 +54,7 @@ var
   MineModule: TMineModule;
 
 implementation
-uses UnitCommander, IniFiles;
+uses UnitCommander, UnitMineScripter, IniFiles;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
@@ -70,6 +70,24 @@ procedure TMineModule.DataModuleCreate(Sender: TObject);
 begin
   Self.InitPython('minecommander.ini');
 
+
+  UnitMineScripter.filenameini := 'minecommander.ini';
+  var Scripter := TMineScripter.ObtainScripter(
+    procedure (script: String)
+    begin
+      PythonEngine1.ExecString(script);
+    end
+  );
+  Scripter.LoadScripts();
+
+  MineCommander.InitScriptingProc :=
+    procedure
+    begin
+      Scripter.InitScripts();
+    end;
+
+  MineCommander.Configure(AsServer);
+
   MineCommander.RunMagic :=
     procedure (command: String)
     begin
@@ -80,11 +98,6 @@ begin
       PythonEngine1.ExecString(_PyScript);
     end;
 
-  MineCommander.RunScriptProc :=
-    procedure (script: String)
-    begin
-      PythonEngine1.ExecString(script);
-    end;
 
   MineCommander.ProcessMagic :=
     procedure (command: String)
@@ -93,7 +106,7 @@ begin
       MineCommander.NoteWill(command);
     end;
 
-  MineCommander.Configure(AsServer);
+
 
   PythonModule1.Initialize();
 end;
