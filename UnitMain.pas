@@ -51,30 +51,23 @@ var
 
 implementation
 
-uses UnitCommander,  UnitMineModule;
+uses UnitMineModule;
 {$R *.dfm}
 
 procedure TFormMain.ButtonRunScriptClick(Sender: TObject);
 begin
-
-  TThread.CreateAnonymousThread(procedure
-    begin
-      MineCommander.RunMagic('hello world of minecraft!');
-    end
-  ).Start();
-
+  MineModule.StartPythonMagicThread();
 end;
 
 procedure TFormMain.ButtonTestMagicClick(Sender: TObject);
 begin
-  MineCommander.PassCommand('MAGIC', EditMagicTest.Text);
+  MineModule.PassMagicCommand(EditMagicTest.Text)
 end;
 
 procedure TFormMain.ButtonTgBotClick(Sender: TObject);
 var caption: string;
 begin
-  MineCommander.TgBotActive := not MineCommander.TgBotActive;
-  if MineCommander.TgBotActive then
+  if MineModule.BreakTgBotActivity() then
     caption := 'Stop Telegram Bot'
   else
     caption := 'Start Telegram Bot';

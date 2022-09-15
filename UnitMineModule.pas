@@ -44,6 +44,10 @@ type
     property UpdateCommandItemsListCallbackProc: TProc<string> write _UpdateCommandItemsListCallbackProc;
     property PyScript: string write _PyScript;
     property CommandItemsList: TStrings write setCommandItemsList;
+
+    procedure StartPythonMagicThread();
+    procedure PassMagicCommand(commandline: string);
+    function BreakTgBotActivity(): Boolean;
   end;
 
 var
@@ -55,6 +59,12 @@ uses UnitCommander, IniFiles;
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+function TMineModule.BreakTgBotActivity: Boolean;
+begin
+  MineCommander.TgBotActive := not MineCommander.TgBotActive;
+  RESULT := MineCommander.TgBotActive;
+end;
 
 procedure TMineModule.DataModuleCreate(Sender: TObject);
 begin
@@ -131,6 +141,11 @@ begin
   MineCommander.ReceiveCommand(aCmd, aData);
 end;
 
+procedure TMineModule.PassMagicCommand(commandline: string);
+begin
+  MineCommander.PassCommand('MAGIC', commandline);
+end;
+
 procedure TMineModule.PythonModule1Events0Execute(Sender: TObject; PSelf,
   Args: PPyObject; var Result: PPyObject);
 begin
@@ -201,6 +216,15 @@ procedure TMineModule.setCommandItemsList(CommandItemsList: TStrings);
 begin
   MineCommander.LoadCommands(CommandItemsList);
 end;
+procedure TMineModule.StartPythonMagicThread;
+begin
+  TThread.CreateAnonymousThread(procedure
+    begin
+      MineCommander.RunMagic('hello world of minecraft!');
+    end
+  ).Start();
+end;
+
 initialization
 
 finalization
