@@ -11,7 +11,6 @@ object FormMain: TFormMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
@@ -71,14 +70,8 @@ object FormMain: TFormMain
           Font.Height = -13
           Font.Name = 'Courier New'
           Font.Style = []
+          Font.Quality = fqClearTypeNatural
           TabOrder = 0
-          CodeFolding.GutterShapeSize = 11
-          CodeFolding.CollapsedLineColor = clGrayText
-          CodeFolding.FolderBarLinesColor = clGrayText
-          CodeFolding.IndentGuidesColor = clGray
-          CodeFolding.IndentGuides = True
-          CodeFolding.ShowCollapsedLine = False
-          CodeFolding.ShowHintMark = True
           UseCodeFolding = False
           Gutter.Font.Charset = DEFAULT_CHARSET
           Gutter.Font.Color = clWindowText
@@ -92,7 +85,6 @@ object FormMain: TFormMain
             ''
             'mc.postToChat(mine_message.Value)'
             '')
-          FontSmoothing = fsmNone
         end
         object ButtonRunScript: TButton
           Left = 1
@@ -265,25 +257,12 @@ object FormMain: TFormMain
     Left = 24
     Top = 8
   end
-  object PythonEngine1: TPythonEngine
-    AutoLoad = False
-    IO = PythonGUIInputOutput1
-    Left = 272
-    Top = 8
-  end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
     DelayWrites = True
     UnicodeIO = True
     RawOutput = False
     Output = Memo1
     Left = 608
-    Top = 8
-  end
-  object PythonDelphiVarMessage: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_message'
-    Left = 448
     Top = 8
   end
   object SynPythonSyn1: TSynPythonSyn
@@ -294,56 +273,5 @@ object FormMain: TFormMain
     SystemAttri.Style = [fsBold, fsUnderline]
     Left = 520
     Top = 8
-  end
-  object PythonDelphiVarLoop: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_loop'
-    Left = 444
-    Top = 66
-  end
-  object PythonDelphiVarLoopCountdown: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_countdown'
-    Left = 436
-    Top = 114
-  end
-  object PythonDelphiVarLoopDelay: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_loopdelay'
-    Left = 436
-    Top = 162
-  end
-  object PythonModule1: TPythonModule
-    Engine = PythonEngine1
-    Events = <
-      item
-        Name = 'delphi_define_commands'
-        OnExecute = PythonModule1Events0Execute
-      end
-      item
-        Name = 'delphi_request_loop_command'
-        OnExecute = PythonModule1Events1Execute
-      end
-      item
-        Name = 'delphi_request_instance'
-        OnExecute = PythonModule1Events2Execute
-      end
-      item
-        Name = 'delphi_synchronize_activities'
-        OnExecute = PythonModule1Events3Execute
-      end>
-    ModuleName = 'delphi_module'
-    Errors = <>
-    Left = 268
-    Top = 74
-  end
-  object PyDelphiWrapper1: TPyDelphiWrapper
-    Engine = PythonEngine1
-    Module = PythonModule1
-    Left = 268
-    Top = 146
   end
 end
