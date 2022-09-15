@@ -65,20 +65,4 @@ object MineModule: TMineModule
     Left = 188
     Top = 226
   end
-  object SynPythonSyn1: TSynPythonSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    KeyAttri.Foreground = clOlive
-    SystemAttri.Style = [fsBold, fsUnderline]
-    Left = 586
-    Top = 48
-  end
-  object PythonGUIInputOutput1: TPythonGUIInputOutput
-    DelayWrites = True
-    UnicodeIO = True
-    RawOutput = False
-    Left = 594
-    Top = 144
-  end
 end

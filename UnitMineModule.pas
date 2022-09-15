@@ -3,8 +3,7 @@ unit UnitMineModule;
 interface
 
 uses
-  System.SysUtils, System.Classes, PythonEngine, Vcl.PythonGUIInputOutput,
-  SynEditHighlighter, SynEditCodeFolding, SynHighlighterPython, WrapDelphi;
+  System.SysUtils, System.Classes, PythonEngine, WrapDelphi;
 
 type
   TMineModule = class(TDataModule)
@@ -15,8 +14,6 @@ type
     PythonDelphiVarLoop: TPythonDelphiVar;
     PythonDelphiVarLoopCountdown: TPythonDelphiVar;
     PythonDelphiVarLoopDelay: TPythonDelphiVar;
-    SynPythonSyn1: TSynPythonSyn;
-    PythonGUIInputOutput1: TPythonGUIInputOutput;
     procedure DataModuleCreate(Sender: TObject);
     procedure PythonModule1Events0Execute(Sender: TObject; PSelf,
       Args: PPyObject; var Result: PPyObject);
@@ -83,7 +80,6 @@ begin
     end;
 
   MineCommander.Configure(AsServer);
-  //MineCommander.LoadCommands(Self.CheckListBoxCommands.Items);
 
   PythonModule1.Initialize();
 end;
