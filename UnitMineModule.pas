@@ -3,7 +3,7 @@ unit UnitMineModule;
 interface
 
 uses
-  System.SysUtils, System.Classes, PythonEngine, WrapDelphi;
+  System.SysUtils, System.Classes, PythonEngine, WrapDelphi, ncSources;
 
 type
   TMineModule = class(TDataModule)
@@ -14,6 +14,7 @@ type
     PythonDelphiVarLoop: TPythonDelphiVar;
     PythonDelphiVarLoopCountdown: TPythonDelphiVar;
     PythonDelphiVarLoopDelay: TPythonDelphiVar;
+    ncServerSource1: TncServerSource;
     procedure DataModuleCreate(Sender: TObject);
     procedure PythonModule1Events0Execute(Sender: TObject; PSelf,
       Args: PPyObject; var Result: PPyObject);
@@ -23,6 +24,9 @@ type
       Args: PPyObject; var Result: PPyObject);
     procedure PythonModule1Events3Execute(Sender: TObject; PSelf,
       Args: PPyObject; var Result: PPyObject);
+    function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
+      aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
+      const aSenderComponent, aReceiverComponent: string): TArray<System.Byte>;
 
   private
     { Private declarations }
@@ -117,6 +121,14 @@ begin
   finally
     IniFile.Free();
   end;
+end;
+
+function TMineModule.ncServerSource1HandleCommand(Sender: TObject;
+  aLine: TncLine; aCmd: Integer; const aData: TArray<System.Byte>;
+  aRequiresResult: Boolean; const aSenderComponent,
+  aReceiverComponent: string): TArray<System.Byte>;
+begin
+  MineCommander.ReceiveCommand(aCmd, aData);
 end;
 
 procedure TMineModule.PythonModule1Events0Execute(Sender: TObject; PSelf,

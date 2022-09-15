@@ -251,12 +251,6 @@ object FormMain: TFormMain
       end
     end
   end
-  object ncServerSource1: TncServerSource
-    EncryptionKey = 'SetEncryptionKey'
-    OnHandleCommand = ncServerSource1HandleCommand
-    Left = 24
-    Top = 8
-  end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
     DelayWrites = True
     UnicodeIO = True

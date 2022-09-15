@@ -4,14 +4,13 @@ interface
 
 uses
   System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, ncSources,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.PythonGUIInputOutput, SynEdit, SynEditHighlighter,
   SynEditCodeFolding, SynHighlighterPython, Vcl.ComCtrls, Vcl.ExtCtrls,
   Vcl.Samples.Spin, Vcl.CheckLst, PythonEngine;
 
 type
   TFormMain = class(TForm)
-    ncServerSource1: TncServerSource;
     ButtonAct: TButton;
     SynEdit1: TSynEdit;
     Memo1: TMemo;
@@ -34,9 +33,6 @@ type
     ButtonTestMagic: TButton;
     ButtonTgBot: TButton;
     procedure ButtonActClick(Sender: TObject);
-    function ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
-      aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
-      const aSenderComponent, aReceiverComponent: string): TArray<System.Byte>;
     procedure ButtonRunScriptClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ButtonTestMagicClick(Sender: TObject);
@@ -88,15 +84,18 @@ end;
 
 procedure TFormMain.ButtonActClick(Sender: TObject);
 begin
-  ncServerSource1.Active := not ncServerSource1.Active;
-
-  if ncServerSource1.Active then
+  with MineModule do
   begin
-    ButtonAct.Caption := 'Stop MineServer';
-    PageControl1.ActivePageIndex := TABIX_SCRIPT;
-  end
-  else
-    ButtonAct.Caption := 'Start MineServer';
+    ncServerSource1.Active := not ncServerSource1.Active;
+
+    if ncServerSource1.Active then
+    begin
+      ButtonAct.Caption := 'Stop MineServer';
+      PageControl1.ActivePageIndex := TABIX_SCRIPT;
+    end
+    else
+      ButtonAct.Caption := 'Start MineServer';
+  end;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -138,15 +137,6 @@ begin
 
   Self.SpinEditLoopCountdown.Value := 3000;
   Self.SpinEditLoopDelay.Value := 200;
-end;
-
-
-
-function TFormMain.ncServerSource1HandleCommand(Sender: TObject; aLine: TncLine;
-  aCmd: Integer; const aData: TArray<System.Byte>; aRequiresResult: Boolean;
-  const aSenderComponent, aReceiverComponent: string): TArray<System.Byte>;
-begin
-  MineCommander.ReceiveCommand(aCmd, aData);
 end;
 
 end.

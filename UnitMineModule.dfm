@@ -65,4 +65,10 @@ object MineModule: TMineModule
     Left = 188
     Top = 226
   end
+  object ncServerSource1: TncServerSource
+    EncryptionKey = 'SetEncryptionKey'
+    OnHandleCommand = ncServerSource1HandleCommand
+    Left = 16
+    Top = 312
+  end
 end
