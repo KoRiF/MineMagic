@@ -15,7 +15,6 @@ type
     SynEdit1: TSynEdit;
     Memo1: TMemo;
     ButtonRunScript: TButton;
-    ComboBoxBlocks: TComboBox;
     PageControl1: TPageControl;
     TabSheetCmdServer: TTabSheet;
     TabSheetScripting: TTabSheet;

@@ -114,85 +114,6 @@ object FormMain: TFormMain
         Height = 15
         Caption = 'Loop Delay, ms '
       end
-      object ComboBoxBlocks: TComboBox
-        Left = 543
-        Top = 58
-        Width = 145
-        Height = 23
-        TabOrder = 0
-        Text = 'Select block...'
-        Items.Strings = (
-          'AIR                  '
-          'STONE                '
-          'GRASS                '
-          'DIRT                 '
-          'COBBLESTONE          '
-          'WOOD PLANKS          '
-          'SAPLING              '
-          'BEDROCK              '
-          'WATER FLOWING        '
-          'WATER STATIONARY     '
-          'LAVA FLOWING         '
-          'LAVA STATIONARY      '
-          'SAND                 '
-          'GRAVEL               '
-          'GOLD ORE             '
-          'IRON ORE             '
-          'COAL ORE             '
-          'WOOD                 '
-          'LEAVES               '
-          'GLASS                '
-          'LAPIS LAZULI ORE     '
-          'LAPIS LAZULI BLOCK   '
-          'SANDSTONE            '
-          'BED                  '
-          'COBWEB               '
-          'GRASS TALL           '
-          'WOOL                 '
-          'FLOWER YELLOW        '
-          'FLOWER CYAN          '
-          'MUSHROOM BROWN       '
-          'MUSHROOM RED         '
-          'GOLD BLOCK           '
-          'IRON BLOCK           '
-          'STONE SLAB DOUBLE    '
-          'STONE SLAB           '
-          'BRICK BLOCK          '
-          'TNT                  '
-          'BOOKSHELF            '
-          'MOSS STONE           '
-          'OBSIDIAN             '
-          'TORCH                '
-          'FIRE                 '
-          'STAIRS WOOD          '
-          'CHEST                '
-          'DIAMOND ORE          '
-          'DIAMOND BLOCK        '
-          'CRAFTING TABLE       '
-          'FARMLAND             '
-          'FURNACE INACTIVE     '
-          'FURNACE ACTIVE       '
-          'DOOR WOOD            '
-          'LADDER               '
-          'STAIRS COBBLESTONE   '
-          'DOOR IRON            '
-          'REDSTONE ORE         '
-          'SNOW                 '
-          'ICE                  '
-          'SNOW BLOCK           '
-          'CACTUS               '
-          'CLAY                 '
-          'SUGAR CANE           '
-          'FENCE                '
-          'GLOWSTONE BLOCK      '
-          'BEDROCK INVISIBLE    '
-          'STONE BRICK          '
-          'GLASS PANE           '
-          'MELON                '
-          'FENCE GATE           '
-          'GLOWING OBSIDIAN     '
-          'NETHER REACTOR CORE  ')
-      end
       object SpinEditLoopCountdown: TSpinEdit
         Left = 306
         Top = 96
@@ -200,7 +121,7 @@ object FormMain: TFormMain
         Height = 24
         MaxValue = 100000
         MinValue = 0
-        TabOrder = 1
+        TabOrder = 0
         Value = 1000
       end
       object SpinEditLoopDelay: TSpinEdit
@@ -210,7 +131,7 @@ object FormMain: TFormMain
         Height = 24
         MaxValue = 60000
         MinValue = 10
-        TabOrder = 2
+        TabOrder = 1
         Value = 500
       end
       object CheckBoxLoop: TCheckBox
@@ -221,7 +142,7 @@ object FormMain: TFormMain
         Caption = 'Run Magic Loop'
         Checked = True
         State = cbChecked
-        TabOrder = 3
+        TabOrder = 2
       end
       object CheckListBoxCommands: TCheckListBox
         Left = 0
@@ -229,14 +150,14 @@ object FormMain: TFormMain
         Width = 201
         Height = 137
         ItemHeight = 15
-        TabOrder = 4
+        TabOrder = 3
       end
       object EditMagicTest: TEdit
         Left = 376
         Top = 384
         Width = 265
         Height = 23
-        TabOrder = 5
+        TabOrder = 4
         Text = 'MAGIC _'
       end
       object ButtonTestMagic: TButton
@@ -245,7 +166,7 @@ object FormMain: TFormMain
         Width = 75
         Height = 25
         Caption = 'Test Magic'
-        TabOrder = 6
+        TabOrder = 5
         OnClick = ButtonTestMagicClick
       end
     end

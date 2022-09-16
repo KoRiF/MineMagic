@@ -1,5 +1,6 @@
 from mineclasses import *
 from minecontrol import *
+from minecraftcontroller import *
 import mcpi.block as block
 import random
 from minematerials import block_materials
