@@ -90,6 +90,8 @@ procedure TFormMain.FormCreate(Sender: TObject);
 const
   SCRIPTFILE_PY = 'minescript.py';
 begin
+  MineModule.PythonEngine1.IO := Self.PythonGUIInputOutput1;
+
   if FileExists(SCRIPTFILE_PY) then
     SynEdit1.Lines.LoadFromFile(SCRIPTFILE_PY);
 
