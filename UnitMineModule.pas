@@ -3,8 +3,7 @@ unit UnitMineModule;
 interface
 
 uses
-  System.SysUtils, System.Classes, PythonEngine, WrapDelphi, ncSources
-  , UnitTelegrammer;
+  System.SysUtils, System.Classes, PythonEngine, WrapDelphi, ncSources;
 
 type
   TMineModule = class(TDataModule)
@@ -31,7 +30,7 @@ type
 
   private
     { Private declarations }
-    TgBot: TTelegramBot;
+
     _UpdatePySharedVariablesProc: TProc;
     _UpdateCommandItemsListCallbackProc: TProc<string>;
     _PyScript: string;
@@ -40,12 +39,9 @@ type
 
     procedure InitPython(fileini: string);
 
-    function getTgBotActive(): Boolean;
-    procedure setTgBotActive(Active: Boolean);
   public
     { Public declarations }
 
-    property TgBotActive: Boolean read getTgBotActive write setTgBotActive;
     property UpdatePySharedVariables: TProc write _UpdatePySharedVariablesProc;
     property UpdateCommandItemsListCallbackProc: TProc<string> write _UpdateCommandItemsListCallbackProc;
     property PyScript: string write _PyScript;
@@ -61,15 +57,16 @@ var
   MineModule: TMineModule;
 
 implementation
-uses UnitCommander, UnitMineScripter, IniFiles;
+uses UnitCommander, UnitMineScripter, UnitTelegrammer, IniFiles;
 {%CLASSGROUP 'Vcl.Controls.TControl'}
+var TgBot: TTelegramBot;
 
 {$R *.dfm}
 
 function TMineModule.BreakTgBotActivity: Boolean;
 begin
-  TgBotActive := not TgBotActive;
-  RESULT := TgBotActive;
+  TgBot.Active := not TgBot.Active;
+  RESULT := TgBot.Active;
 end;
 
 procedure TMineModule.DataModuleCreate(Sender: TObject);
@@ -131,11 +128,6 @@ begin
   );
 
   PythonModule1.Initialize();
-end;
-
-function TMineModule.getTgBotActive: Boolean;
-begin
-  RESULT := Self.TgBot.Active;
 end;
 
 procedure TMineModule.InitPython(fileini: string);
@@ -255,15 +247,6 @@ end;
 procedure TMineModule.setCommandItemsList(CommandItemsList: TStrings);
 begin
   MineCommander.LoadCommands(CommandItemsList);
-end;
-
-procedure TMineModule.setTgBotActive(Active: Boolean);
-begin
-  if Active <> Self.TgBot.Active then
-    if Active then
-      Self.TgBot.Run()
-    else
-      Self.TgBot.Terminate();
 end;
 
 procedure TMineModule.StartPythonMagicThread;

@@ -29,9 +29,10 @@ type
     procedure ReplyMessage(ChatId: Integer; text: string);
   private
     _Thread: TThread;
-    function isActive(): Boolean;
+    function getActivity(): Boolean;
+    procedure setActivity(live: Boolean);
   public
-    property Active: Boolean read IsActive;
+    property Active: Boolean read getActivity write setActivity;
   private
     function DownloadMessageFile(fileId: string): string;
     procedure ProcessMessageVoice(TgMsg: TftMessage);
@@ -104,7 +105,7 @@ begin
   RESULT := Bot;
 end;
 
-function TTelegramBot.isActive: Boolean;
+function TTelegramBot.getActivity: Boolean;
 begin
   RESULT := Assigned(_Thread);
 end;
@@ -181,6 +182,15 @@ begin
 end;
 
 
+
+procedure TTelegramBot.setActivity(live: Boolean);
+begin
+  if live <> Self.Active then
+    if live then
+      Self.Run()
+    else
+      Self.Terminate();
+end;
 
 procedure TTelegramBot.Terminate;
 begin
