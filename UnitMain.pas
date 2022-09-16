@@ -14,10 +14,8 @@ type
     ButtonAct: TButton;
     SynEdit1: TSynEdit;
     Memo1: TMemo;
-    PythonGUIInputOutput1: TPythonGUIInputOutput;
     ButtonRunScript: TButton;
     ComboBoxBlocks: TComboBox;
-    SynPythonSyn1: TSynPythonSyn;
     PageControl1: TPageControl;
     TabSheetCmdServer: TTabSheet;
     TabSheetScripting: TTabSheet;
@@ -90,7 +88,7 @@ procedure TFormMain.FormCreate(Sender: TObject);
 const
   SCRIPTFILE_PY = 'minescript.py';
 begin
-  MineModule.PythonEngine1.IO := Self.PythonGUIInputOutput1;
+  MineModule.PythonGUIInputOutput1.Output := Memo1;
 
   if FileExists(SCRIPTFILE_PY) then
     SynEdit1.Lines.LoadFromFile(SCRIPTFILE_PY);

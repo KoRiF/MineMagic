@@ -5,6 +5,7 @@ object MineModule: TMineModule
   PixelsPerInch = 96
   object PythonEngine1: TPythonEngine
     AutoLoad = False
+    IO = PythonGUIInputOutput1
     Left = 32
     Top = 16
   end
@@ -70,5 +71,21 @@ object MineModule: TMineModule
     OnHandleCommand = ncServerSource1HandleCommand
     Left = 16
     Top = 312
+  end
+  object SynPythonSyn1: TSynPythonSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
+    KeyAttri.Foreground = clOlive
+    SystemAttri.Style = [fsBold, fsUnderline]
+    Left = 520
+    Top = 8
+  end
+  object PythonGUIInputOutput1: TPythonGUIInputOutput
+    DelayWrites = True
+    UnicodeIO = True
+    RawOutput = False
+    Left = 608
+    Top = 8
   end
 end
