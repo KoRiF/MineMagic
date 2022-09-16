@@ -77,18 +77,13 @@ end;
 
 procedure TFormMain.ButtonActClick(Sender: TObject);
 begin
-  with MineModule do
+  if MineModule.BreakSocketServerActivity then
   begin
-    ncServerSource1.Active := not ncServerSource1.Active;
-
-    if ncServerSource1.Active then
-    begin
-      ButtonAct.Caption := 'Stop MineServer';
-      PageControl1.ActivePageIndex := TABIX_SCRIPT;
-    end
-    else
-      ButtonAct.Caption := 'Start MineServer';
-  end;
+    ButtonAct.Caption := 'Stop MineServer';
+    PageControl1.ActivePageIndex := TABIX_SCRIPT;
+  end
+  else
+    ButtonAct.Caption := 'Start MineServer';
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);

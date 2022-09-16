@@ -51,6 +51,7 @@ type
     procedure StartPythonMagicThread();
     procedure PassMagicCommand(commandline: string);
     function BreakTgBotActivity(): Boolean;
+    function BreakSocketServerActivity(): Boolean;
   end;
 
 var
@@ -62,6 +63,12 @@ uses UnitCommander, UnitMineScripter, UnitTelegrammer, IniFiles;
 var TgBot: TTelegramBot;
 
 {$R *.dfm}
+
+function TMineModule.BreakSocketServerActivity: Boolean;
+begin
+  ncServerSource1.Active := not ncServerSource1.Active;
+  RESULT := ncServerSource1.Active;
+end;
 
 function TMineModule.BreakTgBotActivity: Boolean;
 begin
