@@ -11,7 +11,6 @@ object FormMain: TFormMain
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 15
@@ -71,28 +70,20 @@ object FormMain: TFormMain
           Font.Height = -13
           Font.Name = 'Courier New'
           Font.Style = []
+          Font.Quality = fqClearTypeNatural
           TabOrder = 0
-          CodeFolding.GutterShapeSize = 11
-          CodeFolding.CollapsedLineColor = clGrayText
-          CodeFolding.FolderBarLinesColor = clGrayText
-          CodeFolding.IndentGuidesColor = clGray
-          CodeFolding.IndentGuides = True
-          CodeFolding.ShowCollapsedLine = False
-          CodeFolding.ShowHintMark = True
           UseCodeFolding = False
           Gutter.Font.Charset = DEFAULT_CHARSET
           Gutter.Font.Color = clWindowText
           Gutter.Font.Height = -11
           Gutter.Font.Name = 'Courier New'
           Gutter.Font.Style = []
-          Highlighter = SynPythonSyn1
           Lines.Strings = (
             'from mcpi.minecraft import Minecraft'
             'mc = Minecraft.create()'
             ''
             'mc.postToChat(mine_message.Value)'
             '')
-          FontSmoothing = fsmNone
         end
         object ButtonRunScript: TButton
           Left = 1
@@ -123,85 +114,6 @@ object FormMain: TFormMain
         Height = 15
         Caption = 'Loop Delay, ms '
       end
-      object ComboBoxBlocks: TComboBox
-        Left = 543
-        Top = 58
-        Width = 145
-        Height = 23
-        TabOrder = 0
-        Text = 'Select block...'
-        Items.Strings = (
-          'AIR                  '
-          'STONE                '
-          'GRASS                '
-          'DIRT                 '
-          'COBBLESTONE          '
-          'WOOD PLANKS          '
-          'SAPLING              '
-          'BEDROCK              '
-          'WATER FLOWING        '
-          'WATER STATIONARY     '
-          'LAVA FLOWING         '
-          'LAVA STATIONARY      '
-          'SAND                 '
-          'GRAVEL               '
-          'GOLD ORE             '
-          'IRON ORE             '
-          'COAL ORE             '
-          'WOOD                 '
-          'LEAVES               '
-          'GLASS                '
-          'LAPIS LAZULI ORE     '
-          'LAPIS LAZULI BLOCK   '
-          'SANDSTONE            '
-          'BED                  '
-          'COBWEB               '
-          'GRASS TALL           '
-          'WOOL                 '
-          'FLOWER YELLOW        '
-          'FLOWER CYAN          '
-          'MUSHROOM BROWN       '
-          'MUSHROOM RED         '
-          'GOLD BLOCK           '
-          'IRON BLOCK           '
-          'STONE SLAB DOUBLE    '
-          'STONE SLAB           '
-          'BRICK BLOCK          '
-          'TNT                  '
-          'BOOKSHELF            '
-          'MOSS STONE           '
-          'OBSIDIAN             '
-          'TORCH                '
-          'FIRE                 '
-          'STAIRS WOOD          '
-          'CHEST                '
-          'DIAMOND ORE          '
-          'DIAMOND BLOCK        '
-          'CRAFTING TABLE       '
-          'FARMLAND             '
-          'FURNACE INACTIVE     '
-          'FURNACE ACTIVE       '
-          'DOOR WOOD            '
-          'LADDER               '
-          'STAIRS COBBLESTONE   '
-          'DOOR IRON            '
-          'REDSTONE ORE         '
-          'SNOW                 '
-          'ICE                  '
-          'SNOW BLOCK           '
-          'CACTUS               '
-          'CLAY                 '
-          'SUGAR CANE           '
-          'FENCE                '
-          'GLOWSTONE BLOCK      '
-          'BEDROCK INVISIBLE    '
-          'STONE BRICK          '
-          'GLASS PANE           '
-          'MELON                '
-          'FENCE GATE           '
-          'GLOWING OBSIDIAN     '
-          'NETHER REACTOR CORE  ')
-      end
       object SpinEditLoopCountdown: TSpinEdit
         Left = 306
         Top = 96
@@ -209,7 +121,7 @@ object FormMain: TFormMain
         Height = 24
         MaxValue = 100000
         MinValue = 0
-        TabOrder = 1
+        TabOrder = 0
         Value = 1000
       end
       object SpinEditLoopDelay: TSpinEdit
@@ -219,7 +131,7 @@ object FormMain: TFormMain
         Height = 24
         MaxValue = 60000
         MinValue = 10
-        TabOrder = 2
+        TabOrder = 1
         Value = 500
       end
       object CheckBoxLoop: TCheckBox
@@ -230,7 +142,7 @@ object FormMain: TFormMain
         Caption = 'Run Magic Loop'
         Checked = True
         State = cbChecked
-        TabOrder = 3
+        TabOrder = 2
       end
       object CheckListBoxCommands: TCheckListBox
         Left = 0
@@ -238,14 +150,14 @@ object FormMain: TFormMain
         Width = 201
         Height = 137
         ItemHeight = 15
-        TabOrder = 4
+        TabOrder = 3
       end
       object EditMagicTest: TEdit
         Left = 376
         Top = 384
         Width = 265
         Height = 23
-        TabOrder = 5
+        TabOrder = 4
         Text = 'MAGIC _'
       end
       object ButtonTestMagic: TButton
@@ -254,96 +166,9 @@ object FormMain: TFormMain
         Width = 75
         Height = 25
         Caption = 'Test Magic'
-        TabOrder = 6
+        TabOrder = 5
         OnClick = ButtonTestMagicClick
       end
     end
-  end
-  object ncServerSource1: TncServerSource
-    EncryptionKey = 'SetEncryptionKey'
-    OnHandleCommand = ncServerSource1HandleCommand
-    Left = 24
-    Top = 8
-  end
-  object PythonEngine1: TPythonEngine
-    AutoLoad = False
-    IO = PythonGUIInputOutput1
-    Left = 272
-    Top = 8
-  end
-  object PythonGUIInputOutput1: TPythonGUIInputOutput
-    DelayWrites = True
-    UnicodeIO = True
-    RawOutput = False
-    Output = Memo1
-    Left = 608
-    Top = 8
-  end
-  object PythonDelphiVarMessage: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_message'
-    Left = 448
-    Top = 8
-  end
-  object SynPythonSyn1: TSynPythonSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    KeyAttri.Foreground = clOlive
-    SystemAttri.Style = [fsBold, fsUnderline]
-    Left = 520
-    Top = 8
-  end
-  object PythonDelphiVarLoop: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_loop'
-    Left = 444
-    Top = 66
-  end
-  object PythonDelphiVarLoopCountdown: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_countdown'
-    Left = 436
-    Top = 114
-  end
-  object PythonDelphiVarLoopDelay: TPythonDelphiVar
-    Engine = PythonEngine1
-    Module = '__main__'
-    VarName = 'mine_loopdelay'
-    Left = 436
-    Top = 162
-  end
-  object PythonModule1: TPythonModule
-    Engine = PythonEngine1
-    Events = <
-      item
-        Name = 'delphi_define_commands'
-        OnExecute = PythonModule1Events0Execute
-      end
-      item
-        Name = 'delphi_request_loop_command'
-        OnExecute = PythonModule1Events1Execute
-      end
-      item
-        Name = 'delphi_request_instance'
-        OnExecute = PythonModule1Events2Execute
-      end
-      item
-        Name = 'delphi_synchronize_activities'
-        OnExecute = PythonModule1Events3Execute
-      end>
-    ModuleName = 'delphi_module'
-    Errors = <>
-    Left = 268
-    Top = 74
-  end
-  object PyDelphiWrapper1: TPyDelphiWrapper
-    Engine = PythonEngine1
-    Module = PythonModule1
-    Left = 268
-    Top = 146
   end
 end

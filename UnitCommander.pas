@@ -2,7 +2,7 @@ unit UnitCommander;
 
 interface
 
-uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitMineScripter, UnitTelegrammer,
+uses UnitVoiceRecorder, UnitSpeechRecognizer,
   System.Generics.Collections, System.SysUtils, System.Classes;
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
@@ -48,8 +48,6 @@ type
   TMineCommander = Class
     Recorder: TVoiceRecorder;
     Recognizer: TSpeechRecognizer;
-    Scripter: TMineScripter;
-    TgBot: TTelegramBot;
   private
     const MAGIC_KEY = 'MAGIC';
     RPC_MAGIC = 0;
@@ -74,12 +72,11 @@ type
     procedure PassCommand(CommandKey: String; Commandline: String = ''); overload;
     procedure PassCommand(Cmd: Integer; ArgData: String = ''); overload;
     procedure ReceiveCommand(Cmd: Integer; ArgData: TArray<System.Byte>);
-  private
+
     function RecognizeMineVoice(filename: String): String;
     function RecognizeMineCommand(sentence: String): String;
   private
     _WillList: TThreadList;
-    _RunScriptProc: TProc<String>;
     _RunMagic: TProc<String>;
     _ProcessMagic: TProc<String>;
     _SendCommandProc: TProc<Integer, TArray<System.Byte>>;
@@ -91,7 +88,6 @@ type
     property SendCommandProc: TProc<Integer, TArray<System.Byte>> write _SendCommandProc;
     property ProcessMagic: TProc<String> read _ProcessMagic write _ProcessMagic;
     property RunMagic: TProc<String> read _RunMagic write _RunMagic;
-    property RunScriptProc: TProc<String> write _RunScriptProc;
 
     procedure LoadCommands(Commands: TStrings);
     function ListKeywords(Prefix: Char = '['; delimiter: String = ', '; Postfix: Char = ']'): String;
@@ -101,18 +97,14 @@ type
     function InstantiateScript(keyword: String): String;
   protected
     procedure EstablishLocalProcessingLoop();
-    procedure InitScripting();
+  private
+    var _InitScriptingProc: TProc;
   public
     type TRole =  (AsServer, AsClient);
     procedure Configure(role: TRole);
-
+    property InitScriptingProc: TProc write _InitScriptingProc;
   private
     procedure ConfigureAsServer;
-  private
-    function getTgBotActive(): Boolean;
-    procedure setTgBotActive(Active: Boolean);
-  public
-    property TgBotActive: Boolean read getTgBotActive write setTgBotActive;
   End;
 
 var MineCommander: TMineCommander;
@@ -157,7 +149,8 @@ end;
 procedure TMineCommander.ConfigureAsServer;
 begin
   EstablishLocalProcessingLoop();
-  InitScripting;
+  if Assigned(_InitScriptingProc) then
+    _InitScriptingProc();
 end;
 
 constructor TMineCommander.Create;
@@ -167,23 +160,8 @@ begin
   UnitSpeechRecognizer.filenameini := 'minecommander.ini';
   Recognizer := TSpeechRecognizer.ObtainRecognizer(asrAzure);
 
-  UnitTelegrammer.filenameini := 'minecommander.ini';
-  TgBot := TTelegramBot.InstantinateBot();
-  TgBot.ProcessVoiceFile := (
-    procedure (voiceFileName: String; Reply: TProc<string>)
-    begin
-      var voice := RecognizeMineVoice(voiceFileName);
-      Reply('Accepted: ' + voice);
-        PassCommand('MAGIC', voice);
-    end
-  );
-  TgBot.ProcessTextMessage :=  (
-    procedure (text: String; Reply: TProc<string>)
-    begin
-      Reply('Accepted: ' + text);
-        PassCommand('MAGIC', text);
-    end
-  );
+
+
 
   _MagicCommands := TDictionary<String, TCommandRec>.Create();
   _WillList := TThreadList.Create();
@@ -215,14 +193,6 @@ begin
   COMMANDKEYMAP.Add(MAGIC_KEY, RPC_MAGIC);
 end;
 
-procedure TMineCommander.InitScripting;
-begin
-  UnitMineScripter.filenameini := 'minecommander.ini';
-  Self.Scripter := TMineScripter.ObtainScripter(_RunScriptProc);
-
-  Self.Scripter.InitScripts();
-end;
-
 function TMineCommander.InstantiateScript(keyword: String): String;
 begin
   keyword := keyword.ToUpper;
@@ -232,10 +202,7 @@ begin
     RESULT := '';
 end;
 
-function TMineCommander.getTgBotActive: Boolean;
-begin
-  RESULT := Self.TgBot.Active;
-end;
+
 
 function TMineCommander.ListKeywords(Prefix: Char; delimiter: String; Postfix: Char): String;
 const STR_QOUTA = '"';
@@ -270,6 +237,8 @@ begin
     IniFile.ReadSectionValues('COMMANDS', CommandList);
     for var command in  Commands do
     begin
+      if command.StartsWith('#') then
+        CONTINUE;
       cmdRec.Keyword := command;
       cmdRec.InstatinationScript := CommandList.Values[command];
       _MagicCommands.Add(command, cmdRec);
@@ -434,14 +403,7 @@ begin
 end;
 
 
-procedure TMineCommander.setTgBotActive(Active: Boolean);
-begin
-  if Active <> Self.TgBot.Active then
-    if Active then
-      Self.TgBot.Run()
-    else
-      Self.TgBot.Terminate();
-end;
+
 
 
 
