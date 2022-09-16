@@ -3,7 +3,8 @@ unit UnitMineModule;
 interface
 
 uses
-  System.SysUtils, System.Classes, PythonEngine, WrapDelphi, ncSources;
+  System.SysUtils, System.Classes, PythonEngine, WrapDelphi, ncSources
+  , UnitTelegrammer;
 
 type
   TMineModule = class(TDataModule)
@@ -30,7 +31,7 @@ type
 
   private
     { Private declarations }
-
+    TgBot: TTelegramBot;
     _UpdatePySharedVariablesProc: TProc;
     _UpdateCommandItemsListCallbackProc: TProc<string>;
     _PyScript: string;
@@ -38,12 +39,18 @@ type
     procedure setCommandItemsList(CommandItemsList: TStrings);
 
     procedure InitPython(fileini: string);
+
+    function getTgBotActive(): Boolean;
+    procedure setTgBotActive(Active: Boolean);
   public
     { Public declarations }
+
+    property TgBotActive: Boolean read getTgBotActive write setTgBotActive;
     property UpdatePySharedVariables: TProc write _UpdatePySharedVariablesProc;
     property UpdateCommandItemsListCallbackProc: TProc<string> write _UpdateCommandItemsListCallbackProc;
     property PyScript: string write _PyScript;
     property CommandItemsList: TStrings write setCommandItemsList;
+
 
     procedure StartPythonMagicThread();
     procedure PassMagicCommand(commandline: string);
@@ -55,15 +62,14 @@ var
 
 implementation
 uses UnitCommander, UnitMineScripter, IniFiles;
-
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
 
 function TMineModule.BreakTgBotActivity: Boolean;
 begin
-  MineCommander.TgBotActive := not MineCommander.TgBotActive;
-  RESULT := MineCommander.TgBotActive;
+  TgBotActive := not TgBotActive;
+  RESULT := TgBotActive;
 end;
 
 procedure TMineModule.DataModuleCreate(Sender: TObject);
@@ -106,9 +112,30 @@ begin
       MineCommander.NoteWill(command);
     end;
 
-
+  UnitTelegrammer.filenameini := 'minecommander.ini';
+  TgBot := TTelegramBot.InstantinateBot();
+  TgBot.ProcessVoiceFile := (
+    procedure (voiceFileName: String; Reply: TProc<string>)
+    begin
+      var voice := MineCommander.RecognizeMineVoice(voiceFileName);
+      Reply('Accepted: ' + voice);
+        MineCommander.PassCommand('MAGIC', voice);
+    end
+  );
+  TgBot.ProcessTextMessage :=  (
+    procedure (text: String; Reply: TProc<string>)
+    begin
+      Reply('Accepted: ' + text);
+        MineCommander.PassCommand('MAGIC', text);
+    end
+  );
 
   PythonModule1.Initialize();
+end;
+
+function TMineModule.getTgBotActive: Boolean;
+begin
+  RESULT := Self.TgBot.Active;
 end;
 
 procedure TMineModule.InitPython(fileini: string);
@@ -229,6 +256,16 @@ procedure TMineModule.setCommandItemsList(CommandItemsList: TStrings);
 begin
   MineCommander.LoadCommands(CommandItemsList);
 end;
+
+procedure TMineModule.setTgBotActive(Active: Boolean);
+begin
+  if Active <> Self.TgBot.Active then
+    if Active then
+      Self.TgBot.Run()
+    else
+      Self.TgBot.Terminate();
+end;
+
 procedure TMineModule.StartPythonMagicThread;
 begin
   TThread.CreateAnonymousThread(procedure

@@ -2,7 +2,7 @@ unit UnitCommander;
 
 interface
 
-uses UnitVoiceRecorder, UnitSpeechRecognizer, UnitTelegrammer,
+uses UnitVoiceRecorder, UnitSpeechRecognizer,
   System.Generics.Collections, System.SysUtils, System.Classes;
 type
   TRPCMineCommands = (rpcMagic, rpcStartRecord, rpcStopRecord, rpcRecognize);
@@ -48,7 +48,6 @@ type
   TMineCommander = Class
     Recorder: TVoiceRecorder;
     Recognizer: TSpeechRecognizer;
-    TgBot: TTelegramBot;
   private
     const MAGIC_KEY = 'MAGIC';
     RPC_MAGIC = 0;
@@ -73,7 +72,7 @@ type
     procedure PassCommand(CommandKey: String; Commandline: String = ''); overload;
     procedure PassCommand(Cmd: Integer; ArgData: String = ''); overload;
     procedure ReceiveCommand(Cmd: Integer; ArgData: TArray<System.Byte>);
-  private
+
     function RecognizeMineVoice(filename: String): String;
     function RecognizeMineCommand(sentence: String): String;
   private
@@ -106,11 +105,6 @@ type
     property InitScriptingProc: TProc write _InitScriptingProc;
   private
     procedure ConfigureAsServer;
-  private
-    function getTgBotActive(): Boolean;
-    procedure setTgBotActive(Active: Boolean);
-  public
-    property TgBotActive: Boolean read getTgBotActive write setTgBotActive;
   End;
 
 var MineCommander: TMineCommander;
@@ -166,23 +160,8 @@ begin
   UnitSpeechRecognizer.filenameini := 'minecommander.ini';
   Recognizer := TSpeechRecognizer.ObtainRecognizer(asrAzure);
 
-  UnitTelegrammer.filenameini := 'minecommander.ini';
-  TgBot := TTelegramBot.InstantinateBot();
-  TgBot.ProcessVoiceFile := (
-    procedure (voiceFileName: String; Reply: TProc<string>)
-    begin
-      var voice := RecognizeMineVoice(voiceFileName);
-      Reply('Accepted: ' + voice);
-        PassCommand('MAGIC', voice);
-    end
-  );
-  TgBot.ProcessTextMessage :=  (
-    procedure (text: String; Reply: TProc<string>)
-    begin
-      Reply('Accepted: ' + text);
-        PassCommand('MAGIC', text);
-    end
-  );
+
+
 
   _MagicCommands := TDictionary<String, TCommandRec>.Create();
   _WillList := TThreadList.Create();
@@ -223,10 +202,7 @@ begin
     RESULT := '';
 end;
 
-function TMineCommander.getTgBotActive: Boolean;
-begin
-  RESULT := Self.TgBot.Active;
-end;
+
 
 function TMineCommander.ListKeywords(Prefix: Char; delimiter: String; Postfix: Char): String;
 const STR_QOUTA = '"';
@@ -425,14 +401,7 @@ begin
 end;
 
 
-procedure TMineCommander.setTgBotActive(Active: Boolean);
-begin
-  if Active <> Self.TgBot.Active then
-    if Active then
-      Self.TgBot.Run()
-    else
-      Self.TgBot.Terminate();
-end;
+
 
 
 
