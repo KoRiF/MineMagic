@@ -62,6 +62,9 @@ begin
     ini.ReadSectionValues('SCRIPTS', Self._ScriptsList);
     for var  k:= 0 to Self._ScriptsList.Count - 1 do
     begin
+      if Self._ScriptsList[k].StartsWith('#') then
+        CONTINUE;
+
       var scriptkey := Self._ScriptsList.KeyNames[k];
       var scriptpy := Self._ScriptsList.Values[scriptkey];
 

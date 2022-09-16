@@ -258,6 +258,10 @@ end;
 procedure TMineModule.setCommandItemsList(CommandItemsList: TStrings);
 begin
   MineCommander.LoadCommands(CommandItemsList);
+  for var r := CommandItemsList.Count - 1 downto 0 do
+    if CommandItemsList[r].StartsWith('#') then
+      CommandItemsList.Delete(r);
+
 end;
 
 procedure TMineModule.StartPythonMagicThread;

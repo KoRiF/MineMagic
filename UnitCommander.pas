@@ -237,6 +237,8 @@ begin
     IniFile.ReadSectionValues('COMMANDS', CommandList);
     for var command in  Commands do
     begin
+      if command.StartsWith('#') then
+        CONTINUE;
       cmdRec.Keyword := command;
       cmdRec.InstatinationScript := CommandList.Values[command];
       _MagicCommands.Add(command, cmdRec);
